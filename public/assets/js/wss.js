@@ -77,7 +77,12 @@ export const registerSocketEvents = (socket) => {
       userDetails.userInfo = user;
       userDetails.hasWebcam = hasWebcam;
 
-      showMessage(userDetails);
+      const iconClickHandler = (e) => {
+        const uid = e.target.id.trim().split("-")[1];
+        dlog(`Requesting a connection with ${uid}`);
+      };
+
+      showMessage(userDetails, iconClickHandler);
     });
   });
 };

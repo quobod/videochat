@@ -44,7 +44,7 @@ export const updateUsersList = async (userList, listItemClickHandler) => {
   }
 };
 
-export const showMessage = (userDetails) => {
+export const showMessage = (userDetails, iconClickHandler) => {
   const { userInfo, hasWebcam } = userDetails;
   const messageParent = document.querySelector("#message-container");
   const alert = newElement("div");
@@ -85,7 +85,9 @@ export const showMessage = (userDetails) => {
 
   // Icon attributes
   addAttribute(webcamIcon, "class", "bi bi-webcam-fill icon");
+  addAttribute(webcamIcon, "id", `wc-${userInfo._id}`);
   addAttribute(messageIcon, "class", "bi bi-chat-left-dots-fill icon");
+  addAttribute(messageIcon, "id", `mi-${userInfo._id}`);
 
   /* Append elements */
 
@@ -114,4 +116,7 @@ export const showMessage = (userDetails) => {
 
   // Set alert's title
   row1P.innerHTML = `<p>Request a private connection with ${userInfo.fname}</p>`;
+
+  addClickHandler(webcamIcon, iconClickHandler);
+  addClickHandler(messageIcon, iconClickHandler);
 };

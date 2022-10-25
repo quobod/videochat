@@ -48,16 +48,19 @@ export const showMessage = (userDetails) => {
   const { userInfo, hasWebcam } = userDetails;
   const messageParent = document.querySelector("#message-container");
   const alert = newElement("div");
-  const title = newElement("h5");
-  const body = newElement("p");
-  const group = newElement("div");
-  const camIcon = newElement("i");
+  const alertCloseButton = newElement("button");
+  const container = newElement("div");
+  const row1 = newElement("div");
+  const row2 = newElement("div");
+  const row1Col = newElement("div");
+  const row2Col = newElement("div");
+  const row1P = newElement("p");
+  const webcamIcon = newElement("i");
   const messageIcon = newElement("i");
-  const closeButton = newElement("button");
 
-  removeChildren(messageParent);
+  /* Set attributes */
 
-  // Set attributes
+  // Alert attributes
   addAttribute(
     alert,
     "class",
@@ -65,28 +68,50 @@ export const showMessage = (userDetails) => {
   );
   addAttribute(alert, "role", "alert");
   addAttribute(alert, "style", "display:inline-flex;");
-  addAttribute(title, "class", "alert-heading");
-  addAttribute(body, "class", "mb-0");
-  addAttribute(group, "class", "input-group");
-  addAttribute(camIcon, "class", "bi bi-webcam-fill");
+
+  // Alert close button attributes
+  addAttribute(alertCloseButton, "class", "btn-close");
+  addAttribute(alertCloseButton, "type", "button");
+  addAttribute(alertCloseButton, "data-bs-dismiss", "alert");
+  addAttribute(alertCloseButton, "aria-label", "Close");
+
+  // Container, rows and columns attributes
+  addAttribute(container, "class", "container-fluid m-0 p-0");
+  addAttribute(container, "style", "margin:0;padding:0;");
+  addAttribute(row1, "class", "row m-0 p-0");
+  addAttribute(row2, "class", "row m-0 p-0");
+  addAttribute(row1Col, "class", "col-12 m-0 p-0");
+  addAttribute(row2Col, "class", "col-12 m-0 p-0");
+
+  // Icon attributes
+  addAttribute(webcamIcon, "class", "bi bi-webcam-fill");
   addAttribute(messageIcon, "class", "bi bi-chat-left-dots-fill");
-  addAttribute(closeButton, "class", "btn-close");
-  addAttribute(closeButton, "type", "button");
-  addAttribute(closeButton, "data-bs-dismiss", "alert");
-  addAttribute(closeButton, "aria-label", "Close");
+
+  /* Append elements */
+
+  // Append to view
+  appendChild(messageParent, alert);
+
+  // Append to alert
+  appendChild(alert, container);
+  appendChild(alert, alertCloseButton);
+
+  // Append to container, rows and columns
+  appendChild(container, row1);
+  appendChild(container, row2);
+  appendChild(row1, row1Col);
+  appendChild(row2, row2Col);
 
   // Append elements
-  appendChild(messageParent, alert);
-  appendChild(alert, title);
-  appendChild(alert, body);
-  appendChild(alert, group);
-  appendChild(alert, closeButton);
+  appendChild(row1, row1P);
 
+  // Detect user's webcam
   if (hasWebcam) {
-    appendChild(group, camIcon);
+    appendChild(row2Col, webcamIcon);
   } else {
-    appendChild(group, messageIcon);
+    appendChild(row2Col, messageIcon);
   }
 
-  title.innerHTML = `<p>${userInfo.fname}</p>`;
+  // Set alert's title
+  row1P.innerHTML = `<p>Request a private connection with ${userInfo.fname}</p>`;
 };

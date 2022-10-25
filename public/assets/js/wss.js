@@ -27,7 +27,11 @@ export const registerSocketEvents = (socket) => {
       arrUsers.push({ ...user });
     }
 
-    updateUsersList(arrUsers);
+    const eventHandler = (e) => {
+      dlog(`${e.target.id} was clicked`);
+    };
+
+    updateUsersList(arrUsers, eventHandler);
   });
 
   socket.on("registered", (data) => {

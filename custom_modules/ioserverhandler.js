@@ -103,6 +103,11 @@ export default (io) => {
       }
     });
 
+    socket.on("connectionrequest", (data) => {
+      const { sender, receiver } = data;
+      log(`User ${sender} is request a connection with user ${receiver}`);
+    });
+
     socket.on("disconnectme", (data) => {
       const { uid } = data;
       const removedUser = userManager.removeUser(uid);

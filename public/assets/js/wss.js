@@ -79,7 +79,13 @@ export const registerSocketEvents = (socket) => {
 
       const iconClickHandler = (e) => {
         const uid = e.target.id.trim().split("-")[1];
-        dlog(`Requesting a connection with ${uid}`);
+        const rmtid = document.querySelector("#rmtid-input").value;
+        dlog(`User ${rmtid} is requesting a connection with ${uid}`);
+        userDetails = {};
+        userDetails.sender = rmtid;
+        userDetails.receiver = uid;
+
+        socket.emit("connectionrequest", userDetails);
       };
 
       showMessage(userDetails, iconClickHandler);

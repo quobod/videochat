@@ -92,6 +92,17 @@ export default (io) => {
       }
     });
 
+    socket.on("userclicked", (data) => {
+      const { uid } = data;
+      log(`User with ID: ${uid} was clicked`);
+
+      const user = userManager.getUser(uid);
+
+      if (user) {
+        io.to(socket.id).emit("clickeduser", { strUser: stringify(user) });
+      }
+    });
+
     socket.on("disconnectme", (data) => {
       const { uid } = data;
       const removedUser = userManager.removeUser(uid);

@@ -250,7 +250,7 @@ export const createProfile = asyncHandler(async (req, res) => {
 
   const { uid } = req.params;
 
-  dlog(`UID ${uid}`);
+  dlog(`Route Parameter: ${uid}\n`);
 
   Chat.findOne({ user: `${uid}` }, (err, doc) => {
     if (err) {

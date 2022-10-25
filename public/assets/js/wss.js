@@ -1,6 +1,6 @@
 import { parse, stringify } from "./utils.js";
 import { log, dlog } from "./clientutils.js";
-import { updateUsersList } from "./ui.js";
+import { updateUsersList, showMessage } from "./ui.js";
 
 let socketIO = null,
   userDetails = {};
@@ -27,11 +27,14 @@ export const registerSocketEvents = (socket) => {
       arrUsers.push({ ...user });
     }
 
-    const eventHandler = (e) => {
+    const listItemClickHandler = (e) => {
       dlog(`${e.target.id} was clicked`);
+      userDetails = {};
+      userDetails.uid = e.target.id.trim().split("-")[1];
+      socket.emit("userclicked", userDetails);
     };
 
-    updateUsersList(arrUsers, eventHandler);
+    updateUsersList(arrUsers, listItemClickHandler);
   });
 
   socket.on("registered", (data) => {
@@ -63,6 +66,13 @@ export const registerSocketEvents = (socket) => {
       dlog(err);
       return;
     }
+  });
+
+  socket.on("clickeduser", (data) => {
+    const { strUser } = data;
+    const user = parse(strUser);
+
+    showMessage(user);
   });
 };
 

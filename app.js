@@ -197,7 +197,7 @@ function letsencryptOptions(domain = null) {
     certPath = path.join(__dirname, "../certi/");
     return {
       key: fs.readFileSync(certPath + "server.key"),
-      cert: fs.readFileSync(certPath + "server.cert"),
+      cert: fs.readFileSync(certPath + "server.crt"),
     };
   }
 }

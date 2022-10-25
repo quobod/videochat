@@ -44,13 +44,15 @@ export const updateUsersList = async (userList, listItemClickHandler) => {
   }
 };
 
-export const showMessage = (userInfo) => {
+export const showMessage = (userDetails) => {
+  const { userInfo, hasWebcam } = userDetails;
   const messageParent = document.querySelector("#message-container");
   const alert = newElement("div");
   const title = newElement("h5");
   const body = newElement("p");
   const group = newElement("div");
   const camIcon = newElement("i");
+  const messageIcon = newElement("i");
   const closeButton = newElement("button");
 
   removeChildren(messageParent);
@@ -67,6 +69,7 @@ export const showMessage = (userInfo) => {
   addAttribute(body, "class", "mb-0");
   addAttribute(group, "class", "input-group");
   addAttribute(camIcon, "class", "bi bi-webcam-fill");
+  addAttribute(messageIcon, "class", "bi bi-chat-left-dots-fill");
   addAttribute(closeButton, "class", "btn-close");
   addAttribute(closeButton, "type", "button");
   addAttribute(closeButton, "data-bs-dismiss", "alert");
@@ -78,7 +81,12 @@ export const showMessage = (userInfo) => {
   appendChild(alert, body);
   appendChild(alert, group);
   appendChild(alert, closeButton);
-  appendChild(group, camIcon);
+
+  if (hasWebcam) {
+    appendChild(group, camIcon);
+  } else {
+    appendChild(group, messageIcon);
+  }
 
   title.innerHTML = `<p>${userInfo.fname}</p>`;
 };

@@ -72,7 +72,13 @@ export const registerSocketEvents = (socket) => {
     const { strUser } = data;
     const user = parse(strUser);
 
-    showMessage(user);
+    detectWebcam(function (hasWebcam) {
+      userDetails = {};
+      userDetails.userInfo = user;
+      userDetails.hasWebcam = hasWebcam;
+
+      showMessage(userDetails);
+    });
   });
 };
 
@@ -83,3 +89,11 @@ addEventListener("beforeunload", (event) => {
   socketIO.emit("disconnectme", userDetails);
   return;
 });
+
+function detectWebcam(callback) {
+  let md = navigator.mediaDevices;
+  if (!md || !md.enumerateDevices) return callback(false);
+  md.enumerateDevices().then((devices) => {
+    callback(devices.some((device) => "videoinput" === device.kind));
+  });
+}

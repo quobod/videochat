@@ -84,8 +84,8 @@ export const showMessage = (userDetails) => {
   addAttribute(row2Col, "class", "col-12 m-0 p-0");
 
   // Icon attributes
-  addAttribute(webcamIcon, "class", "bi bi-webcam-fill");
-  addAttribute(messageIcon, "class", "bi bi-chat-left-dots-fill");
+  addAttribute(webcamIcon, "class", "bi bi-webcam-fill icon");
+  addAttribute(messageIcon, "class", "bi bi-chat-left-dots-fill icon");
 
   /* Append elements */
 

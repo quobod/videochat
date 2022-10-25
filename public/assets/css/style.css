@@ -1,3 +1,7 @@
 .main-menu-button:hover {
     cursor: pointer;
 }
+
+.icon {
+    cursor: pointer;
+}

@@ -105,7 +105,15 @@ export default (io) => {
 
     socket.on("connectionrequest", (data) => {
       const { sender, receiver } = data;
-      log(`User ${sender} is request a connection with user ${receiver}`);
+
+      const userSender = userManager.getUser(sender);
+      const userReceiver = userManager.getUser(receiver);
+
+      if (userSender && userReceiver) {
+        log(
+          `${userSender.fname} is requesting a connection with ${userReceiver.fname}`
+        );
+      }
     });
 
     socket.on("disconnectme", (data) => {

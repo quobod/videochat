@@ -9,7 +9,7 @@ const logger = bunyan.createLogger({ name: "Landing Controller" });
 export const landingPage = asyncHandler(async (req, res) => {
   logger.info(`GET /`);
 
-  log(`Route /\n${stringify(req)}\n`);
+  log(`Route /\n${req}\n`);
 
   try {
     req.flash("success_msg", "Hey there");

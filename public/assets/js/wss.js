@@ -91,6 +91,13 @@ export const registerSocketEvents = (socket) => {
       showMessage(userDetails, iconClickHandler);
     });
   });
+
+  socket.on("connectionrequest", (data) => {
+    const { strSender } = data;
+    const sender = parser(strSender);
+
+    dlog(`${sender.fname} is requesting a connection with you`);
+  });
 };
 
 addEventListener("beforeunload", (event) => {

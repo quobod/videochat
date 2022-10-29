@@ -108,11 +108,23 @@ export default (io) => {
 
       const userSender = userManager.getUser(sender);
       const userReceiver = userManager.getUser(receiver);
+      const strUserSender = stringify({
+        fname: userSender.fname,
+        sid: userSender.sid,
+      });
 
       if (userSender && userReceiver) {
         log(
           `${userSender.fname} is requesting a connection with ${userReceiver.fname}`
         );
+
+        log(
+          `Sender's SID: ${userSender.sid}\tReceiver's SID: ${userReceiver.sid}`
+        );
+
+        io.to(userReceiver.sid).emit("connectionrequested", {
+          strSender: strUserSender,
+        });
       }
     });
 

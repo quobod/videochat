@@ -80,7 +80,7 @@ export const registerSocketEvents = (socket) => {
       const iconClickHandler = (e) => {
         const uid = e.target.id.trim().split("-")[1];
         const rmtid = document.querySelector("#rmtid-input").value;
-        dlog(`User ${rmtid} is requesting a connection with ${uid}`);
+        dlog(`You are requesting a connection with ${uid}`);
         userDetails = {};
         userDetails.sender = rmtid;
         userDetails.receiver = uid;
@@ -92,9 +92,9 @@ export const registerSocketEvents = (socket) => {
     });
   });
 
-  socket.on("connectionrequest", (data) => {
+  socket.on("connectionrequested", (data) => {
     const { strSender } = data;
-    const sender = parser(strSender);
+    const sender = parse(strSender);
 
     dlog(`${sender.fname} is requesting a connection with you`);
   });

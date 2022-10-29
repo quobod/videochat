@@ -45,7 +45,7 @@ export const updateUsersList = async (userList, listItemClickHandler) => {
 };
 
 export const showMessage = (userDetails, iconClickHandler) => {
-  const { userInfo, hasWebcam } = userDetails;
+  const { userInfo, hasWebcam, messageBody, alertType } = userDetails;
   const messageParent = document.querySelector("#message-container");
   const alert = newElement("div");
   const alertCloseButton = newElement("button");
@@ -58,16 +58,19 @@ export const showMessage = (userDetails, iconClickHandler) => {
   const webcamIcon = newElement("i");
   const messageIcon = newElement("i");
 
+  removeChildren(messageParent);
+
   /* Set attributes */
 
   // Alert attributes
   addAttribute(
     alert,
     "class",
-    "alert alert-info d-flex align-items-center alert-dismissible fade show"
+    `alert ${alertType} d-flex align-items-center alert-dismissible fade show`
   );
   addAttribute(alert, "role", "alert");
   addAttribute(alert, "style", "display:inline-flex;");
+  addAttribute(alert, "id", "alert");
 
   // Alert close button attributes
   addAttribute(alertCloseButton, "class", "btn-close");
@@ -115,8 +118,69 @@ export const showMessage = (userDetails, iconClickHandler) => {
   }
 
   // Set alert's title
-  row1P.innerHTML = `<p>Request a private connection with ${userInfo.fname}</p>`;
+  row1P.innerHTML = `${messageBody}`;
 
   addClickHandler(webcamIcon, iconClickHandler);
   addClickHandler(messageIcon, iconClickHandler);
+};
+
+export const showCallAlert = (userDetails) => {
+  const { userInfo, alertType } = userDetails;
+  const messageParent = document.querySelector("#message-container");
+  const alert = newElement("div");
+  const alertCloseButton = newElement("button");
+  const container = newElement("div");
+  const row = newElement("div");
+  const col1 = newElement("div");
+  const col2 = newElement("div");
+  const para1 = newElement("p");
+  const para2 = newElement("p");
+
+  removeChildren(messageParent);
+
+  /* Set attributes */
+
+  // Alert attributes
+  addAttribute(
+    alert,
+    "class",
+    `alert ${alertType} d-flex align-items-center alert-dismissible fade show`
+  );
+  addAttribute(alert, "role", "alert");
+  addAttribute(alert, "style", "display:inline-flex;");
+  addAttribute(alert, "id", "alert");
+
+  // Alert close button attributes
+  addAttribute(alertCloseButton, "class", "btn-close");
+  addAttribute(alertCloseButton, "type", "button");
+  addAttribute(alertCloseButton, "data-bs-dismiss", "alert");
+  addAttribute(alertCloseButton, "aria-label", "Close");
+
+  // Container, rows and columns attributes
+  addAttribute(container, "class", "container-fluid m-0 p-0");
+  addAttribute(container, "style", "margin:0;padding:0;");
+  addAttribute(row, "class", "row m-0 p-0");
+  addAttribute(col1, "class", "col-12 m-0 p-0");
+  addAttribute(col2, "class", "col-12 m-0 p-0");
+
+  /* Append elements */
+
+  // Append to view
+  appendChild(messageParent, alert);
+
+  // Append to alert
+  appendChild(alert, container);
+  appendChild(alert, alertCloseButton);
+
+  // Append to container, rows and columns
+  appendChild(container, row);
+  appendChild(row, col1);
+  appendChild(row, col2);
+
+  // Append elements
+  appendChild(col1, para1);
+  appendChild(col2, para2);
+
+  para1.innerHTML = `<strong>Calling ${userInfo.fname}</strong>`;
+  para2.innerHTML = `<small><strong>Click the close button to cancel request</strong></small>`;
 };

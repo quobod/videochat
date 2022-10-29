@@ -1,6 +1,6 @@
 import { parse, stringify } from "./utils.js";
 import { log, dlog } from "./clientutils.js";
-import { updateUsersList, showMessage } from "./ui.js";
+import { updateUsersList, showMessage, showCallAlert } from "./ui.js";
 
 let socketIO = null,
   userDetails = {};
@@ -76,16 +76,19 @@ export const registerSocketEvents = (socket) => {
       userDetails = {};
       userDetails.userInfo = user;
       userDetails.hasWebcam = hasWebcam;
+      userDetails.messageBody = `<p>Request a private connection with ${user.fname}</p>`;
+      userDetails.alertType = `alert-info`;
 
       const iconClickHandler = (e) => {
         const uid = e.target.id.trim().split("-")[1];
         const rmtid = document.querySelector("#rmtid-input").value;
         dlog(`You are requesting a connection with ${uid}`);
         userDetails = {};
-        userDetails.sender = rmtid;
-        userDetails.receiver = uid;
+        userDetails.userInfo = user;
+        userDetails.alertType = "alert-warning";
 
         socket.emit("connectionrequest", userDetails);
+        showCallAlert(userDetails);
       };
 
       showMessage(userDetails, iconClickHandler);

@@ -13,12 +13,14 @@
 }
 
 .connecton-request-container {
+    width: 0%;
+    height: 0%;
     display: none;
-    width: 0;
-    transition: display 2s, width 3s;
+    transition: width 3s, height 3s, display 3s;
 }
 
-.connecton-request-container .hide {
+.connecton-request-container.hide {
     width: 100%;
-    display: inline-flexbox;
+    height: 100%;
+    display: block;
 }

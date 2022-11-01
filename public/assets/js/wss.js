@@ -87,7 +87,10 @@ export const registerSocketEvents = (socket) => {
     const { strUserDetails } = data;
     userDetails = parse(strUserDetails);
     const callDialog = document.querySelector(
-      `#callrequest-${userDetails._id}`
+      `#callrequest-${userDetails.user._id}`
+    );
+    const callRequestTitle = document.querySelector(
+      `#callrequesttitle-${userDetails.user._id}`
     );
 
     dlog(
@@ -96,8 +99,10 @@ export const registerSocketEvents = (socket) => {
 
     if (callDialog) {
       callDialog.classList.add("hide");
+      callRequestTitle.innerHTML = `${userDetails.user.fname} wants to connect`;
     } else {
       dlog(`No such element`);
+      dlog(`#callrequest-${userDetails._id}`);
     }
   });
 };

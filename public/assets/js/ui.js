@@ -34,12 +34,15 @@ export const updateUsersList = async (
       const col2 = newElement("div");
       const col3 = newElement("div");
       const callRequestContainer = newElement("div");
-      const callRequestRow = newElement("div");
+      const callRequestTitleRow = newElement("div");
+      const callRequestTitleCol = newElement("div");
+      const callRequestAcceptRow = newElement("div");
+      const callRequestRejecttRow = newElement("div");
       const callRequestAcceptCol = newElement("div");
       const callRequestRejectCol = newElement("div");
-      const callSpacerCol = newElement("div");
       const acceptButton = newElement("button");
       const rejectButton = newElement("button");
+      const callRequestTitle = newElement("small");
       const icon = newElement("i");
 
       // Set attributes
@@ -50,10 +53,12 @@ export const updateUsersList = async (
         "container-fluid connecton-request-container"
       );
       addAttribute(callRequestContainer, "id", `callrequest-${uObj._id}`);
-      addAttribute(callRequestRow, "class", "row");
+      addAttribute(callRequestAcceptRow, "class", "row");
+      addAttribute(callRequestRejecttRow, "class", "row");
+      addAttribute(callRequestTitleRow, "class", "row");
       addAttribute(callRequestAcceptCol, "class", "col-5");
       addAttribute(callRequestRejectCol, "class", "col-5");
-      addAttribute(callSpacerCol, "class", "col-2");
+      addAttribute(callRequestTitleCol, "class", "col-12");
       addAttribute(acceptButton, "type", "button");
       addAttribute(acceptButton, "class", "btn btn-success btn-sm");
       addAttribute(rejectButton, "type", "button");
@@ -77,12 +82,17 @@ export const updateUsersList = async (
       addAttribute(col2, "class", "col-4");
       addAttribute(col3, "class", "col-4");
 
+      addAttribute(callRequestTitle, "id", `callrequesttitle-${uObj._id}`);
+
       // Append elements
 
-      appendChild(callRequestContainer, callRequestRow);
-      appendChild(callRequestRow, callRequestAcceptCol);
-      appendChild(callRequestRow, callSpacerCol);
-      appendChild(callRequestRow, callRequestRejectCol);
+      appendChild(callRequestContainer, callRequestTitleRow);
+      appendChild(callRequestTitleRow, callRequestTitleCol);
+      appendChild(callRequestTitleCol, callRequestTitle);
+      appendChild(callRequestContainer, callRequestAcceptRow);
+      appendChild(callRequestContainer, callRequestRejecttRow);
+      appendChild(callRequestAcceptRow, callRequestAcceptCol);
+      appendChild(callRequestRejecttRow, callRequestRejectCol);
       appendChild(callRequestAcceptCol, acceptButton);
       appendChild(callRequestRejectCol, rejectButton);
 

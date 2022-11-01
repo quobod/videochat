@@ -30,11 +30,16 @@ export const registerSocketEvents = (socket) => {
     const listItemClickHandler = (e) => {
       dlog(`${e.target.id} was clicked`);
       userDetails = {};
-      userDetails.uid = e.target.id.trim().split("-")[1];
+      userDetails.receiver = e.target.id.trim().split("-")[1];
+      userDetails.sender = document.querySelector("#rmtid-input").value;
+      userDetails.conntype = e.target.dataset.connectiontype;
+
+      dlog(
+        `Sending connection request\t Sender: ${userDetails.sender} Receiver: ${userDetails.receiver}`
+      );
       socket.emit("userclicked", userDetails);
     };
-
-    updateUsersList(arrUsers, listItemClickHandler);
+    updateUsersList(arrUsers, listItemClickHandler, detectWebcam);
   });
 
   socket.on("registered", (data) => {
@@ -71,35 +76,20 @@ export const registerSocketEvents = (socket) => {
   socket.on("clickeduser", (data) => {
     const { strUser } = data;
     const user = parse(strUser);
+    userDetails = {};
+    userDetails.userInfo = user;
+    userDetails.alertType = `alert-info`;
 
-    detectWebcam(function (hasWebcam) {
-      userDetails = {};
-      userDetails.userInfo = user;
-      userDetails.hasWebcam = hasWebcam;
-      userDetails.messageBody = `<p>Request a private connection with ${user.fname}</p>`;
-      userDetails.alertType = `alert-info`;
-
-      const iconClickHandler = (e) => {
-        const uid = e.target.id.trim().split("-")[1];
-        const rmtid = document.querySelector("#rmtid-input").value;
-        dlog(`You are requesting a connection with ${uid}`);
-        userDetails = {};
-        userDetails.userInfo = user;
-        userDetails.alertType = "alert-warning";
-
-        socket.emit("connectionrequest", userDetails);
-        showCallAlert(userDetails);
-      };
-
-      showMessage(userDetails, iconClickHandler);
-    });
+    showCallAlert(userDetails);
   });
 
   socket.on("connectionrequested", (data) => {
-    const { strSender } = data;
-    const sender = parse(strSender);
+    const { strUserDetails } = data;
+    userDetails = parse(strUserDetails);
 
-    dlog(`${sender.fname} is requesting a connection with you`);
+    dlog(
+      `${userDetails.user.fname} is requesting a ${userDetails.connectionType} connection with you`
+    );
   });
 };
 
@@ -116,5 +106,11 @@ function detectWebcam(callback) {
   if (!md || !md.enumerateDevices) return callback(false);
   md.enumerateDevices().then((devices) => {
     callback(devices.some((device) => "videoinput" === device.kind));
+  });
+}
+
+function hasWebcam() {
+  return detectWebcam((hasWebcam) => {
+    return hasWebcam;
   });
 }

@@ -93,13 +93,26 @@ export default (io) => {
     });
 
     socket.on("userclicked", (data) => {
-      const { uid } = data;
-      log(`User with ID: ${uid} was clicked`);
+      const { sender, receiver, conntype } = data;
+      log(`${sender} requesting connection with ${receiver}`);
+      const userSender = userManager.getUser(sender);
+      const userReceiver = userManager.getUser(receiver);
+      const connectionType =
+        conntype.trim().toLowerCase() == "webcam" ? "webcam" : "message";
 
-      const user = userManager.getUser(uid);
+      if (userSender && userReceiver) {
+        log(
+          `${userSender.fname} is requesting a connection ${conntype} with ${userReceiver.fname}`
+        );
+        io.to(userSender.sid).emit("clickeduser", {
+          strUser: stringify(userReceiver),
+        });
 
-      if (user) {
-        io.to(socket.id).emit("clickeduser", { strUser: stringify(user) });
+        const strUserDetails = stringify({ user: userSender, connectionType });
+
+        io.to(userReceiver.sid).emit("connectionrequested", {
+          strUserDetails,
+        });
       }
     });
 

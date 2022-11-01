@@ -1,5 +1,5 @@
 import { stringify, parse } from "./utils.js";
-import { getAttribute, log, hasCam, dlog } from "./clientutils.js";
+import { getAttribute, log, hasCam, dlog, cap } from "./clientutils.js";
 import {
   getElement,
   newElement,
@@ -12,7 +12,11 @@ import {
   removeChild,
 } from "./computils.js";
 
-export const updateUsersList = async (userList, listItemClickHandler) => {
+export const updateUsersList = async (
+  userList,
+  listItemClickHandler,
+  detectWebcam
+) => {
   const listParent = document.querySelector("#users-parent");
   const currentUser = document.querySelector("#rmtid-input").value;
 
@@ -22,24 +26,57 @@ export const updateUsersList = async (userList, listItemClickHandler) => {
     const uObj = userList[u];
 
     if (uObj._id != currentUser) {
-      const cardTitle = newElement("h6");
+      const userName = newElement("h6");
       const item = newElement("li");
+      const container = newElement("div");
+      const row = newElement("div");
+      const col1 = newElement("div");
+      const col2 = newElement("div");
+      const icon = newElement("i");
 
       // Set attributes
-      addAttribute(cardTitle, "style", "text-align:center;");
-      addAttribute(cardTitle, "id", `h6-${uObj._id}`);
+
+      addAttribute(userName, "style", "text-align:center;");
+      addAttribute(userName, "id", `h6-${uObj._id}`);
       addAttribute(item, "class", "list-group-item flex-fill");
       addAttribute(item, "id", `li-${uObj._id}`);
+      addAttribute(item, "data-toggle", "tooltip");
+      addAttribute(item, "data-placement", "right");
+      addAttribute(item, "data-html", "true");
+      addAttribute(item, "title", `${uObj.fname}`);
+
+      addAttribute(icon, "class", "bi");
+      addAttribute(icon, "id", `icon-${uObj._id}`);
+
+      addAttribute(container, "class", "container-fluid");
+      addAttribute(row, "class", "row");
+      addAttribute(col1, "class", "col-6");
+      addAttribute(col2, "class", "col-6");
 
       // Append elements
       appendChild(listParent, item);
-      appendChild(item, cardTitle);
+      appendChild(item, container);
+      appendChild(container, row);
+      appendChild(row, col1);
+      appendChild(row, col2);
+      appendChild(col1, userName);
+      appendChild(col2, icon);
+
+      detectWebcam((webcam) => {
+        if (webcam) {
+          icon.classList.add("bi-webcam-fill");
+          addAttribute(icon, "data-connectiontype", "webcam");
+        } else {
+          icon.classList.add("bi-chat-dots-fill");
+          addAttribute(icon, "data-connectiontype", "nowebcam");
+        }
+      });
 
       // Set text
-      cardTitle.innerHTML = `<p id="p-${uObj._id}" style="font-size:small;margin:0;padding:3px;"><strong id="s-${uObj._id}">${uObj.fname}</strong></p>`;
+      userName.innerHTML = `<p id="p-${uObj._id}" style="font-size:small;margin:0;padding:3px;"><strong id="s-${uObj._id}">${uObj.fname}</strong></p>`;
 
       // Register click handler for the item element
-      addClickHandler(item, listItemClickHandler);
+      addClickHandler(icon, listItemClickHandler);
     }
   }
 };
@@ -129,14 +166,7 @@ export const showCallAlert = (userDetails) => {
   const messageParent = document.querySelector("#message-container");
   const alert = newElement("div");
   const alertCloseButton = newElement("button");
-  const container = newElement("div");
-  const row = newElement("div");
-  const col1 = newElement("div");
-  const col2 = newElement("div");
-  const para1 = newElement("p");
-  const para2 = newElement("p");
-
-  removeChildren(messageParent);
+  const strong = newElement("strong");
 
   /* Set attributes */
 
@@ -156,12 +186,8 @@ export const showCallAlert = (userDetails) => {
   addAttribute(alertCloseButton, "data-bs-dismiss", "alert");
   addAttribute(alertCloseButton, "aria-label", "Close");
 
-  // Container, rows and columns attributes
-  addAttribute(container, "class", "container-fluid m-0 p-0");
-  addAttribute(container, "style", "margin:0;padding:0;");
-  addAttribute(row, "class", "row m-0 p-0");
-  addAttribute(col1, "class", "col-12 m-0 p-0");
-  addAttribute(col2, "class", "col-12 m-0 p-0");
+  // Alert title
+  strong.innerHTML = `... Calling ${cap(userInfo.fname)}`;
 
   /* Append elements */
 
@@ -169,18 +195,10 @@ export const showCallAlert = (userDetails) => {
   appendChild(messageParent, alert);
 
   // Append to alert
-  appendChild(alert, container);
+  appendChild(alert, strong);
   appendChild(alert, alertCloseButton);
 
-  // Append to container, rows and columns
-  appendChild(container, row);
-  appendChild(row, col1);
-  appendChild(row, col2);
-
-  // Append elements
-  appendChild(col1, para1);
-  appendChild(col2, para2);
-
-  para1.innerHTML = `<strong>Calling ${userInfo.fname}</strong>`;
-  para2.innerHTML = `<small><strong>Click the close button to cancel request</strong></small>`;
+  setTimeout(() => {
+    alert.remove();
+  }, [4000]);
 };

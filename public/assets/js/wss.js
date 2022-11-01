@@ -96,6 +96,8 @@ export const registerSocketEvents = (socket) => {
 
     if (callDialog) {
       callDialog.classList.add("hide");
+    } else {
+      dlog(`No such element`);
     }
   });
 };

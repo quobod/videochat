@@ -32,9 +32,32 @@ export const updateUsersList = async (
       const row = newElement("div");
       const col1 = newElement("div");
       const col2 = newElement("div");
+      const col3 = newElement("div");
+      const callRequestContainer = newElement("div");
+      const callRequestRow = newElement("div");
+      const callRequestAcceptCol = newElement("div");
+      const callRequestRejectCol = newElement("div");
+      const callSpacerCol = newElement("div");
+      const acceptButton = newElement("button");
+      const rejectButton = newElement("button");
       const icon = newElement("i");
 
       // Set attributes
+
+      addAttribute(
+        callRequestContainer,
+        "class",
+        "container-fluid connecton-request-container"
+      );
+      addAttribute(callRequestContainer, "id", `callrequest-${uObj._id}`);
+      addAttribute(callRequestRow, "class", "row");
+      addAttribute(callRequestAcceptCol, "class", "col-5");
+      addAttribute(callRequestRejectCol, "class", "col-5");
+      addAttribute(callSpacerCol, "class", "col-2");
+      addAttribute(acceptButton, "type", "button");
+      addAttribute(acceptButton, "class", "btn btn-success btn-sm");
+      addAttribute(rejectButton, "type", "button");
+      addAttribute(rejectButton, "class", "btn btn-danger btn-sm");
 
       addAttribute(userName, "style", "text-align:center;");
       addAttribute(userName, "id", `h6-${uObj._id}`);
@@ -50,15 +73,26 @@ export const updateUsersList = async (
 
       addAttribute(container, "class", "container-fluid");
       addAttribute(row, "class", "row");
-      addAttribute(col1, "class", "col-6");
-      addAttribute(col2, "class", "col-6");
+      addAttribute(col1, "class", "col-4");
+      addAttribute(col2, "class", "col-4");
+      addAttribute(col3, "class", "col-4");
 
       // Append elements
+
+      appendChild(callRequestContainer, callRequestRow);
+      appendChild(callRequestRow, callRequestAcceptCol);
+      appendChild(callRequestRow, callSpacerCol);
+      appendChild(callRequestRow, callRequestRejectCol);
+      appendChild(callRequestAcceptCol, acceptButton);
+      appendChild(callRequestRejectCol, rejectButton);
+
       appendChild(listParent, item);
       appendChild(item, container);
+      appendChild(item, callRequestContainer);
       appendChild(container, row);
       appendChild(row, col1);
       appendChild(row, col2);
+      appendChild(row, col3);
       appendChild(col1, userName);
       appendChild(col2, icon);
 
@@ -73,7 +107,10 @@ export const updateUsersList = async (
       });
 
       // Set text
+
       userName.innerHTML = `<p id="p-${uObj._id}" style="font-size:small;margin:0;padding:3px;"><strong id="s-${uObj._id}">${uObj.fname}</strong></p>`;
+      acceptButton.innerHTML = `<strong>Accept</strong>`;
+      rejectButton.innerHTML = `<strong>Reject</strong>`;
 
       // Register click handler for the item element
       addClickHandler(icon, listItemClickHandler);

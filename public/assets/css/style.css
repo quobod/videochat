@@ -5,3 +5,20 @@
 .icon {
     cursor: pointer;
 }
+
+.connecton-request-container,
+.connecton-request-container * {
+    margin: 0;
+    padding: 0;
+}
+
+.connecton-request-container {
+    display: none;
+    width: 0;
+    transition: display 2s, width 3s;
+}
+
+.connecton-request-container .hide {
+    width: 100%;
+    display: inline-flexbox;
+}

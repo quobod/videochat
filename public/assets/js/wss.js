@@ -86,10 +86,17 @@ export const registerSocketEvents = (socket) => {
   socket.on("connectionrequested", (data) => {
     const { strUserDetails } = data;
     userDetails = parse(strUserDetails);
+    const callDialog = document.querySelector(
+      `#callrequest-${userDetails._id}`
+    );
 
     dlog(
       `${userDetails.user.fname} is requesting a ${userDetails.connectionType} connection with you`
     );
+
+    if (callDialog) {
+      callDialog.classList.add("hide");
+    }
   });
 };
 

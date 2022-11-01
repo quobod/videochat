@@ -15,7 +15,9 @@ import {
 export const updateUsersList = async (
   userList,
   listItemClickHandler,
-  detectWebcam
+  detectWebcam,
+  acceptCall,
+  rejectCall
 ) => {
   const listParent = document.querySelector("#users-parent");
   const currentUser = document.querySelector("#rmtid-input").value;
@@ -124,6 +126,12 @@ export const updateUsersList = async (
 
       // Register click handler for the item element
       addClickHandler(icon, listItemClickHandler);
+      addClickHandler(acceptButton, () => {
+        acceptCall(uObj._id, document.querySelector("#rmtid-input").value);
+      });
+      addClickHandler(rejectButton, () => {
+        rejectCall(uObj._id, document.querySelector("#rmtid-input").value);
+      });
     }
   }
 };

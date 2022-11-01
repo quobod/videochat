@@ -141,6 +141,30 @@ export default (io) => {
       }
     });
 
+    socket.on("callaccepted", (data) => {
+      const { sender, receiver } = data;
+      const userSender = userManager.getUser(sender);
+      const userReceiver = userManager.getUser(receiver);
+
+      if (userSender && userReceiver) {
+        log(
+          `${userReceiver.fname} accepted ${userSender.fname}'s connection request`
+        );
+      }
+    });
+
+    socket.on("callrejected", (data) => {
+      const { sender, receiver } = data;
+      const userSender = userManager.getUser(sender);
+      const userReceiver = userManager.getUser(receiver);
+
+      if (userSender && userReceiver) {
+        log(
+          `${userReceiver.fname} rejected ${userSender.fname}'s connection request`
+        );
+      }
+    });
+
     socket.on("disconnectme", (data) => {
       const { uid } = data;
       const removedUser = userManager.removeUser(uid);

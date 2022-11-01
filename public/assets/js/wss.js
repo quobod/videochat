@@ -39,7 +39,13 @@ export const registerSocketEvents = (socket) => {
       );
       socket.emit("userclicked", userDetails);
     };
-    updateUsersList(arrUsers, listItemClickHandler, detectWebcam);
+    updateUsersList(
+      arrUsers,
+      listItemClickHandler,
+      detectWebcam,
+      acceptCall,
+      rejectCall
+    );
   });
 
   socket.on("registered", (data) => {
@@ -127,4 +133,20 @@ function hasWebcam() {
   return detectWebcam((hasWebcam) => {
     return hasWebcam;
   });
+}
+
+function acceptCall(senderUid, receiverUid) {
+  dlog(`You accepted ${senderUid}'s connection request`);
+  userDetails = {};
+  userDetails.sender = senderUid;
+  userDetails.receiver = receiverUid;
+  socketIO.emit("callaccepted", userDetails);
+}
+
+function rejectCall(senderUid, receiverUid) {
+  dlog(`You rejected ${senderUid}'s connection request`);
+  userDetails = {};
+  userDetails.sender = senderUid;
+  userDetails.receiver = receiverUid;
+  socketIO.emit("callrejected", userDetails);
 }

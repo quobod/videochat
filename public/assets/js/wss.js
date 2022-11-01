@@ -120,13 +120,14 @@ export const registerSocketEvents = (socket) => {
   socket.on("connectionrequestresponse", (data) => {
     const { responseData } = data;
     const userReponseData = parse(responseData);
-    const { userInfo, response } = userReponseData;
+    const { userInfo, response, roomName } = userReponseData;
 
     dlog(`User ${userInfo.fname} ${response} your request`);
 
     if (response == "accepted") {
       userReponseData.alertType = "alert-success";
       showCallResponse(userReponseData);
+      joinRoom(roomName);
     } else if (response == "rejected") {
       userReponseData.alertType = "alert-warning";
       showCallResponse(userReponseData);
@@ -166,4 +167,41 @@ function rejectCall(senderUid, receiverUid) {
   userDetails.sender = senderUid;
   userDetails.receiver = receiverUid;
   socketIO.emit("callrejected", userDetails);
+}
+
+function joinRoom(roomName) {
+  let xmlHttp;
+
+  try {
+    xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.open("POST", "/chat/room/create");
+
+    xmlHttp.setRequestHeader(
+      "Content-type",
+      "application/x-www-form-urlencoded"
+    );
+
+    xmlHttp.onload = () => {
+      const responseText = xmlHttp.responseText;
+
+      if (responseText) {
+        // log(`\n\tResponse Text: ${stringify(responseText)}\n`);
+        const responseJson = parse(responseText);
+        const token = responseJson.token;
+        const status = responseJson.status;
+
+        if (status) {
+          dlog(`Token:\t${token}\n`);
+
+          // location.href = `/user/room/join?roomName=${roomName}`;
+        }
+      }
+    };
+
+    xmlHttp.send(`roomName=${roomName}`, true);
+  } catch (err) {
+    tlog(err);
+    return;
+  }
 }

@@ -1,3 +1,4 @@
+import { customAlphabet } from "nanoid";
 import { log, cls, stringify, parse } from "./index.js";
 import User from "../models/UserModel.js";
 import Chat from "../models/ChatProfile.js";
@@ -145,6 +146,7 @@ export default (io) => {
       const { sender, receiver } = data;
       const userSender = userManager.getUser(sender);
       const userReceiver = userManager.getUser(receiver);
+      const roomName = randomNameGenerator();
 
       if (userSender && userReceiver) {
         log(
@@ -152,13 +154,14 @@ export default (io) => {
         );
 
         const response = "accepted";
-        const strResponseData = stringify({
+        const strSenderResponseData = stringify({
           userInfo: userReceiver,
           response,
+          roomName,
         });
 
         io.to(userSender.sid).emit("connectionrequestresponse", {
-          responseData: strResponseData,
+          responseData: strSenderResponseData,
         });
       }
     });
@@ -204,4 +207,9 @@ function addCUser(uid) {
   if (index == -1) {
     connectedUsers.push(uid);
   }
+}
+
+function randomNameGenerator() {
+  const randomGenerator = customAlphabet("abcdefghijklmnopqrstuvwxyz", 13);
+  return randomGenerator();
 }

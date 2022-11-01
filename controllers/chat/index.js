@@ -64,17 +64,15 @@ const getAccessToken = (roomName) => {
 };
 
 //  @desc           Create room and token
-//  @route          POST /user/room/create
+//  @route          POST /chat/room/create
 //  @access         Private
 export const createRoomToken = asyncHandler(async (req, res) => {
-  logger.info(`POST: /user/room/create`);
+  logger.info(`POST: /chat/room/create`);
   const user = req.user.withoutPassword();
 
-  const { chatType, roomName } = req.body;
+  const { roomName } = req.body;
 
-  dlog(
-    `Creating room token\n\t\tChat Type: ${chatType} Room Name: ${roomName}`
-  );
+  dlog(`Creating token for room ${roomName}`);
 
   try {
     // find or create a room with the given roomName
@@ -86,7 +84,7 @@ export const createRoomToken = asyncHandler(async (req, res) => {
 
     if (token) {
       dlog(`Created Token`);
-      return res.json({ token: token, status: true, chatType: chatType });
+      return res.json({ token, status: true });
     } else {
       dlog(`Token Failure`);
       return res.json({ status: false, cause: `Failed to create token` });
@@ -95,7 +93,7 @@ export const createRoomToken = asyncHandler(async (req, res) => {
     dlog(`joinRoom error\n\t\t${stringify(err)}`);
     return res.json({
       status: false,
-      cause: `Server Error`,
+      cause: `Server-side Error`,
       detail: `user controller.createRoom method.`,
       err,
     });

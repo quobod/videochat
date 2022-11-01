@@ -128,9 +128,11 @@ export const updateUsersList = async (
       addClickHandler(icon, listItemClickHandler);
       addClickHandler(acceptButton, () => {
         acceptCall(uObj._id, document.querySelector("#rmtid-input").value);
+        callRequestContainer.classList.remove("hide");
       });
       addClickHandler(rejectButton, () => {
         rejectCall(uObj._id, document.querySelector("#rmtid-input").value);
+        callRequestContainer.classList.remove("hide");
       });
     }
   }
@@ -256,4 +258,48 @@ export const showCallAlert = (userDetails) => {
   setTimeout(() => {
     alert.remove();
   }, [4000]);
+};
+
+export const showCallResponse = (userDetails) => {
+  const { userInfo, response, alertType } = userDetails;
+  const messageParent = document.querySelector("#message-container");
+  const alert = newElement("div");
+  const alertCloseButton = newElement("button");
+  const strong = newElement("strong");
+
+  /* Set attributes */
+
+  // Alert attributes
+  addAttribute(
+    alert,
+    "class",
+    `alert ${alertType} d-flex align-items-center alert-dismissible fade show`
+  );
+  addAttribute(alert, "role", "alert");
+  addAttribute(alert, "style", "display:inline-flex;");
+  addAttribute(alert, "id", "alert");
+
+  // Alert close button attributes
+  addAttribute(alertCloseButton, "class", "btn-close");
+  addAttribute(alertCloseButton, "type", "button");
+  addAttribute(alertCloseButton, "data-bs-dismiss", "alert");
+  addAttribute(alertCloseButton, "aria-label", "Close");
+
+  // Alert title
+  strong.innerHTML = `${cap(
+    userInfo.fname
+  )} ${response} your connection request`;
+
+  /* Append elements */
+
+  // Append to view
+  appendChild(messageParent, alert);
+
+  // Append to alert
+  appendChild(alert, strong);
+  appendChild(alert, alertCloseButton);
+
+  setTimeout(() => {
+    alert.remove();
+  }, [7000]);
 };

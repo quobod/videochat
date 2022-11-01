@@ -1,6 +1,11 @@
 import { parse, stringify } from "./utils.js";
 import { log, dlog } from "./clientutils.js";
-import { updateUsersList, showMessage, showCallAlert } from "./ui.js";
+import {
+  updateUsersList,
+  showMessage,
+  showCallAlert,
+  showCallResponse,
+} from "./ui.js";
 
 let socketIO = null,
   userDetails = {};
@@ -111,6 +116,24 @@ export const registerSocketEvents = (socket) => {
       dlog(`#callrequest-${userDetails._id}`);
     }
   });
+
+  socket.on("connectionrequestresponse", (data) => {
+    const { responseData } = data;
+    const userReponseData = parse(responseData);
+    const { userInfo, response } = userReponseData;
+
+    dlog(`User ${userInfo.fname} ${response} your request`);
+
+    if (response == "accepted") {
+      userReponseData.alertType = "alert-success";
+      showCallResponse(userReponseData);
+    } else if (response == "rejected") {
+      userReponseData.alertType = "alert-warning";
+      showCallResponse(userReponseData);
+    } else {
+      dlog(`No response`);
+    }
+  });
 };
 
 addEventListener("beforeunload", (event) => {
@@ -126,12 +149,6 @@ function detectWebcam(callback) {
   if (!md || !md.enumerateDevices) return callback(false);
   md.enumerateDevices().then((devices) => {
     callback(devices.some((device) => "videoinput" === device.kind));
-  });
-}
-
-function hasWebcam() {
-  return detectWebcam((hasWebcam) => {
-    return hasWebcam;
   });
 }
 

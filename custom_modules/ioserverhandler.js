@@ -150,6 +150,16 @@ export default (io) => {
         log(
           `${userReceiver.fname} accepted ${userSender.fname}'s connection request`
         );
+
+        const response = "accepted";
+        const strResponseData = stringify({
+          userInfo: userReceiver,
+          response,
+        });
+
+        io.to(userSender.sid).emit("connectionrequestresponse", {
+          responseData: strResponseData,
+        });
       }
     });
 
@@ -162,6 +172,16 @@ export default (io) => {
         log(
           `${userReceiver.fname} rejected ${userSender.fname}'s connection request`
         );
+
+        const response = "rejected";
+        const strResponseData = stringify({
+          userInfo: userReceiver,
+          response,
+        });
+
+        io.to(userSender.sid).emit("connectionrequestresponse", {
+          responseData: strResponseData,
+        });
       }
     });
 

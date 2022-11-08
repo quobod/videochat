@@ -2,7 +2,7 @@ export const log = console.log.bind(console);
 export const dlog = (arg = "", label = null) => {
   if (null != label) {
     console.group(label);
-    console.log(`\n\t${arg}`);
+    console.log(`\n${arg}`);
     console.groupEnd();
   } else {
     log(`\n\t${arg}\n`);

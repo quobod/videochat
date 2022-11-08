@@ -40,7 +40,7 @@ export const registerSocketEvents = (socket) => {
       userDetails.conntype = e.target.dataset.connectiontype;
 
       dlog(
-        `Sending connection request\t Sender: ${userDetails.sender} Receiver: ${userDetails.receiver}`
+        `Sending ${userDetails.conntype} connection request\t Sender: ${userDetails.sender} Receiver: ${userDetails.receiver}`
       );
       socket.emit("userclicked", userDetails);
     };
@@ -97,6 +97,7 @@ export const registerSocketEvents = (socket) => {
   socket.on("connectionrequested", (data) => {
     const { strUserDetails } = data;
     userDetails = parse(strUserDetails);
+
     const callDialog = document.querySelector(
       `#callrequest-${userDetails.user._id}`
     );
@@ -105,7 +106,7 @@ export const registerSocketEvents = (socket) => {
     );
 
     dlog(
-      `${userDetails.user.fname} is requesting a ${userDetails.connectionType} connection with you`
+      `${userDetails.user.fname} is requesting a ${userDetails.conntype} connection with you`
     );
 
     if (callDialog) {
@@ -120,14 +121,14 @@ export const registerSocketEvents = (socket) => {
   socket.on("connectionrequestresponse", (data) => {
     const { responseData } = data;
     const userReponseData = parse(responseData);
-    const { userInfo, response, roomName } = userReponseData;
+    const { userInfo, response, roomName, connType, sender } = userReponseData;
 
     dlog(`User ${userInfo.fname} ${response} your request`);
 
     if (response == "accepted") {
       userReponseData.alertType = "alert-success";
       showCallResponse(userReponseData);
-      joinRoom(roomName);
+      joinRoom(roomName, connType, sender);
     } else if (response == "rejected") {
       userReponseData.alertType = "alert-warning";
       showCallResponse(userReponseData);
@@ -153,11 +154,12 @@ function detectWebcam(callback) {
   });
 }
 
-function acceptCall(senderUid, receiverUid) {
+function acceptCall(senderUid, receiverUid, connType) {
   dlog(`You accepted ${senderUid}'s connection request`);
   userDetails = {};
   userDetails.sender = senderUid;
   userDetails.receiver = receiverUid;
+  userDetails.connType = connType;
   socketIO.emit("callaccepted", userDetails);
 }
 
@@ -169,13 +171,13 @@ function rejectCall(senderUid, receiverUid) {
   socketIO.emit("callrejected", userDetails);
 }
 
-function joinRoom(roomName) {
+function joinRoom(roomName, connectionType, senderId) {
   let xmlHttp;
 
   try {
     xmlHttp = new XMLHttpRequest();
 
-    xmlHttp.open("POST", "/chat/room/create");
+    xmlHttp.open("POST", "/chat/room/create", true);
 
     xmlHttp.setRequestHeader(
       "Content-type",
@@ -190,16 +192,24 @@ function joinRoom(roomName) {
         const responseJson = parse(responseText);
         const token = responseJson.token;
         const status = responseJson.status;
+        const roomName = responseJson.roomName;
+        const connectionType = responseJson.connectionType;
+        const senderId = responseJson.senderId;
 
         if (status) {
-          dlog(`Token:\t${token}\n`);
+          dlog(
+            `roomName:\t${roomName}\nConn Type:\t${connectionType}\nSender:\t${senderId}\nToken:\t${token}\n`
+          );
 
-          // location.href = `/user/room/join?roomName=${roomName}`;
+          location.href = `/chat/room/join?roomName=${roomName}&connectionType=${connectionType}&senderId=${senderId}`;
         }
       }
     };
 
-    xmlHttp.send(`roomName=${roomName}`, true);
+    xmlHttp.send(
+      `roomName=${roomName}&connectionType=${connectionType}&senderId=${senderId}`,
+      true
+    );
   } catch (err) {
     tlog(err);
     return;

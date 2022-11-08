@@ -70,33 +70,41 @@ export const createRoomToken = asyncHandler(async (req, res) => {
   logger.info(`POST: /chat/room/create`);
   const user = req.user.withoutPassword();
 
-  const { roomName } = req.body;
+  const { roomName, connectionType, senderId } = req.body;
 
-  dlog(`Creating token for room ${roomName}`);
+  if (user._id == senderId) {
+    dlog(`${user.fname} requests a token for room ${roomName}`);
 
-  try {
-    // find or create a room with the given roomName
-    findOrCreateRoom(roomName);
-    nameOfRoom = roomName;
+    try {
+      // find or create a room with the given roomName
+      findOrCreateRoom(roomName);
+      nameOfRoom = roomName;
 
-    // generate an Access Token for a participant in this room
-    token = getAccessToken(roomName);
+      // generate an Access Token for a participant in this room
+      token = getAccessToken(roomName);
 
-    if (token) {
-      dlog(`Created Token`);
-      return res.json({ token, status: true });
-    } else {
-      dlog(`Token Failure`);
-      return res.json({ status: false, cause: `Failed to create token` });
+      if (token) {
+        dlog(`Created Token`);
+        return res.json({
+          token,
+          status: true,
+          roomName,
+          connectionType,
+          senderId,
+        });
+      } else {
+        dlog(`Token Failure`);
+        return res.json({ status: false, cause: `Failed to create token` });
+      }
+    } catch (err) {
+      dlog(`joinRoom error\n\t\t${stringify(err)}`);
+      return res.json({
+        status: false,
+        cause: `Server-side Error`,
+        detail: `user controller.createRoom method.`,
+        err,
+      });
     }
-  } catch (err) {
-    dlog(`joinRoom error\n\t\t${stringify(err)}`);
-    return res.json({
-      status: false,
-      cause: `Server-side Error`,
-      detail: `user controller.createRoom method.`,
-      err,
-    });
   }
 });
 
@@ -107,36 +115,24 @@ export const joinAsPeer = asyncHandler(async (req, res) => {
   logger.info(`GET: /user/room/join`);
   const user = req.user.withoutPassword();
 
-  const { roomName, chatType } = req.query;
+  const { roomName, connectionType, senderId } = req.query;
 
-  dlog(`Joining room data: ${stringify(req.query)}`);
+  dlog(
+    `Joining room data: ${stringify(req.query)}\nReferrer:\t ${req.get(
+      "referrer"
+    )}`
+  );
 
-  const accessToken = getAccessToken(roomName);
-
-  if (accessToken) {
-    dlog(`Joining ${roomName} with token`);
-    let videoChat;
-
-    switch (chatType.toLowerCase().trim()) {
-      case "video_chat":
-        videoChat = true;
-        break;
-
-      default:
-        videoChat = false;
-    }
-
-    res.render("user/_room", {
-      hasToken: token ? true : false,
-      token: `${accessToken}`,
-      roomName: nameOfRoom,
-      videoChat: videoChat,
-      chatType: `${chatType.toLowerCase()}`,
-      user: user,
-      rmtId: user._id,
-      room: true,
-    });
-  }
+  res.render("chat/peers", {
+    title: "Peers",
+    uid: user._id,
+    enteredroom: true,
+    signedin: true,
+    peers: true,
+    roomName,
+    connectionType,
+    senderId,
+  });
 });
 
 //  @desc           Chat Room
@@ -149,7 +145,7 @@ export const enterRoom = asyncHandler(async (req, res) => {
     dlog(`${req.user.fname} entered chat room`);
 
     res.render("chat/room", {
-      title: "Room",
+      title: "Room Dammit",
       uid: req.user.withoutPassword()._id,
       enteredroom: true,
       signedin: true,

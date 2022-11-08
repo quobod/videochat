@@ -95,21 +95,19 @@ export default (io) => {
 
     socket.on("userclicked", (data) => {
       const { sender, receiver, conntype } = data;
-      log(`${sender} requesting connection with ${receiver}`);
+      log(`${sender} requesting a ${conntype} connection with ${receiver}`);
       const userSender = userManager.getUser(sender);
       const userReceiver = userManager.getUser(receiver);
-      const connectionType =
-        conntype.trim().toLowerCase() == "webcam" ? "webcam" : "message";
 
       if (userSender && userReceiver) {
         log(
-          `${userSender.fname} is requesting a connection ${conntype} with ${userReceiver.fname}`
+          `${userSender.fname} is requesting a ${conntype} connection with ${userReceiver.fname}`
         );
         io.to(userSender.sid).emit("clickeduser", {
           strUser: stringify(userReceiver),
         });
 
-        const strUserDetails = stringify({ user: userSender, connectionType });
+        const strUserDetails = stringify({ user: userSender, conntype });
 
         io.to(userReceiver.sid).emit("connectionrequested", {
           strUserDetails,
@@ -143,14 +141,14 @@ export default (io) => {
     });
 
     socket.on("callaccepted", (data) => {
-      const { sender, receiver } = data;
+      const { sender, receiver, connType } = data;
       const userSender = userManager.getUser(sender);
       const userReceiver = userManager.getUser(receiver);
       const roomName = randomNameGenerator();
 
       if (userSender && userReceiver) {
         log(
-          `${userReceiver.fname} accepted ${userSender.fname}'s connection request`
+          `${userReceiver.fname} accepted ${userSender.fname}'s ${connType} connection request`
         );
 
         const response = "accepted";
@@ -158,6 +156,8 @@ export default (io) => {
           userInfo: userReceiver,
           response,
           roomName,
+          connType,
+          sender: userSender._id,
         });
 
         io.to(userSender.sid).emit("connectionrequestresponse", {

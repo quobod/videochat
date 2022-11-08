@@ -111,10 +111,10 @@ export const updateUsersList = async (
       detectWebcam((webcam) => {
         if (webcam) {
           icon.classList.add("bi-webcam-fill");
-          addAttribute(icon, "data-connectiontype", "webcam");
+          addAttribute(icon, "data-connectiontype", "video");
         } else {
           icon.classList.add("bi-chat-dots-fill");
-          addAttribute(icon, "data-connectiontype", "nowebcam");
+          addAttribute(icon, "data-connectiontype", "text");
         }
       });
 
@@ -127,7 +127,11 @@ export const updateUsersList = async (
       // Register click handler for the item element
       addClickHandler(icon, listItemClickHandler);
       addClickHandler(acceptButton, () => {
-        acceptCall(uObj._id, document.querySelector("#rmtid-input").value);
+        acceptCall(
+          uObj._id,
+          document.querySelector("#rmtid-input").value,
+          icon.dataset.connectiontype
+        );
         callRequestContainer.classList.remove("hide");
       });
       addClickHandler(rejectButton, () => {

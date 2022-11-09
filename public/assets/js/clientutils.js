@@ -5,7 +5,7 @@ export const dlog = (arg = "", label = null) => {
     console.log(`\n${arg}`);
     console.groupEnd();
   } else {
-    log(`\n\t${arg}\n`);
+    log(`\n${arg}\n`);
   }
 };
 export const tlog = (arg = "", label = "utils.js") => {

@@ -188,6 +188,28 @@ export default (io) => {
       }
     });
 
+    socket.on("enterroom", (data) => {
+      const { sender, receiver, roomName, connectionType, token } = data;
+      const userReceiver = userManager.getUser(receiver);
+      const userSender = userManager.getUser(sender);
+
+      if (userReceiver && userSender) {
+        log(
+          `${userReceiver.fname} is joining room ${roomName} as a ${connectionType} connection with token ${token}\n`
+        );
+
+        const strUserDetails = stringify({
+          sender,
+          receiver,
+          roomName,
+          connectionType,
+          token,
+        });
+
+        io.to(userReceiver.sid).emit("enterroom", strUserDetails);
+      }
+    });
+
     socket.on("disconnectme", (data) => {
       const { uid } = data;
       const removedUser = userManager.removeUser(uid);

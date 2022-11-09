@@ -128,13 +128,20 @@ export const registerSocketEvents = (socket) => {
     if (response == "accepted") {
       userReponseData.alertType = "alert-success";
       showCallResponse(userReponseData);
-      joinRoom(roomName, connType, sender);
+      joinRoom(roomName, connType, sender, userInfo._id);
     } else if (response == "rejected") {
       userReponseData.alertType = "alert-warning";
       showCallResponse(userReponseData);
     } else {
       dlog(`No response`);
     }
+  });
+
+  socket.on("enterroom", (data) => {
+    userDetails = parse(data);
+    const { roomName, token, connectionType, receiver, sender } = userDetails;
+
+    enterRoom(roomName, token, connectionType, sender, receiver);
   });
 };
 
@@ -171,7 +178,7 @@ function rejectCall(senderUid, receiverUid) {
   socketIO.emit("callrejected", userDetails);
 }
 
-function joinRoom(roomName, connectionType, senderId) {
+function joinRoom(roomName, connectionType, senderId, receiverId) {
   let xmlHttp;
 
   try {
@@ -198,10 +205,18 @@ function joinRoom(roomName, connectionType, senderId) {
 
         if (status) {
           dlog(
-            `roomName:\t${roomName}\nConn Type:\t${connectionType}\nSender:\t${senderId}\nToken:\t${token}\n`
+            `roomName:\t${roomName}\nConn Type:\t${connectionType}\nSender:\t${senderId}\nReceiver:\t${receiverId}\nToken:\t${token}\n`,
+            "sender xhr request"
           );
 
-          location.href = `/chat/room/join?roomName=${roomName}&connectionType=${connectionType}&senderId=${senderId}`;
+          userDetails = {};
+          userDetails.sender = senderId;
+          userDetails.receiver = receiverId;
+          userDetails.roomName = roomName;
+          userDetails.connectionType = connectionType;
+          userDetails.token = token;
+          socketIO.emit("enterroom", userDetails);
+          // location.href = `/chat/room/join?token=${token}&roomName=${roomName}&connectionType=${connectionType}&senderId=${senderId}`;
         }
       }
     };
@@ -214,4 +229,13 @@ function joinRoom(roomName, connectionType, senderId) {
     tlog(err);
     return;
   }
+}
+
+function enterRoom(roomName, token, connectionType, senderId, myId) {
+  let xmlHttp;
+
+  dlog(
+    `roomName:\t${roomName}\nSender:\t${senderId}\nMy ID:\t${myId}\nConn Type:\t${connectionType}\nToken:\t${token}\n`,
+    "receiver xhr request"
+  );
 }

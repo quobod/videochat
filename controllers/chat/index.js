@@ -115,7 +115,7 @@ export const joinAsPeer = asyncHandler(async (req, res) => {
   logger.info(`GET: /user/room/join`);
   const user = req.user.withoutPassword();
 
-  const { roomName, connectionType, senderId } = req.query;
+  const { roomName, connectionType, senderId, token } = req.query;
 
   dlog(
     `Joining room data: ${stringify(req.query)}\nReferrer:\t ${req.get(
@@ -132,6 +132,7 @@ export const joinAsPeer = asyncHandler(async (req, res) => {
     roomName,
     connectionType,
     senderId,
+    token,
   });
 });
 

@@ -147,13 +147,21 @@ export const remoteParticipantHandler = (participant) => {
 
   // Handle the participant track publication event
 
-  participant.tracks.forEach((trackPublicaton) => {
-    if (trackPublicaton.track) {
-      localPart.append(trackPublicaton.track.attach());
+  participant.tracks.forEach((trackPub) => {
+    function displayTrack(track) {
+      const remoteDiv = document.querySelector(`#${participant.identity}`);
+      remoteDiv.append(track.attach());
     }
+
+    if (trackPub.track) {
+      displayTrack(trackPub.track);
+    }
+
+    // listen for any new subscriptions to this track publication
+    trackPub.on("subscribed", displayTrack);
   });
 
-  participant.on("trackPublished", (trackPub) => {
+  participant.on("trackPublished", (trackPublication) => {
     function displayTrack(track) {
       const remoteDiv = document.querySelector(`#${participant.identity}`);
       remoteDiv.append(track.attach());

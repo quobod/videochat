@@ -57,3 +57,7 @@ div.remote {
     left: 0;
 
 }
+
+.bi:hover {
+    cursor: pointer;
+}

@@ -17,7 +17,8 @@ export const updateUsersList = async (
   listItemClickHandler,
   detectWebcam,
   acceptCall,
-  rejectCall
+  rejectCall,
+  blockUser
 ) => {
   const listParent = document.querySelector("#users-parent");
   const currentUser = document.querySelector("#rmtid-input").value;
@@ -26,6 +27,8 @@ export const updateUsersList = async (
 
   for (const u in userList) {
     const uObj = userList[u];
+
+    log(stringify(uObj));
 
     if (uObj._id != currentUser) {
       const userName = newElement("h6");
@@ -45,7 +48,8 @@ export const updateUsersList = async (
       const acceptButton = newElement("button");
       const rejectButton = newElement("button");
       const callRequestTitle = newElement("small");
-      const icon = newElement("i");
+      const connectIcon = newElement("i");
+      const blockIcon = newElement("i");
 
       // Set attributes
 
@@ -75,8 +79,19 @@ export const updateUsersList = async (
       addAttribute(item, "data-html", "true");
       addAttribute(item, "title", `${uObj.fname}`);
 
-      addAttribute(icon, "class", "bi");
-      addAttribute(icon, "id", `icon-${uObj._id}`);
+      addAttribute(connectIcon, "class", "bi");
+      addAttribute(connectIcon, "id", `connecticon-${uObj._id}`);
+      addAttribute(connectIcon, "data-toggle", "tooltip");
+      addAttribute(connectIcon, "data-placement", "right");
+      addAttribute(connectIcon, "data-html", "true");
+      addAttribute(connectIcon, "title", `Connect with ${uObj.fname}`);
+
+      addAttribute(blockIcon, "class", "bi bi-eye-slash-fill");
+      addAttribute(blockIcon, "id", `blockicon-${uObj._id}`);
+      addAttribute(blockIcon, "data-toggle", "tooltip");
+      addAttribute(blockIcon, "data-placement", "right");
+      addAttribute(blockIcon, "data-html", "true");
+      addAttribute(blockIcon, "title", `Block ${uObj.fname}`);
 
       addAttribute(container, "class", "container-fluid");
       addAttribute(row, "class", "row");
@@ -106,15 +121,16 @@ export const updateUsersList = async (
       appendChild(row, col2);
       appendChild(row, col3);
       appendChild(col1, userName);
-      appendChild(col2, icon);
+      appendChild(col2, connectIcon);
+      appendChild(col3, blockIcon);
 
       detectWebcam((webcam) => {
         if (webcam) {
-          icon.classList.add("bi-webcam-fill");
-          addAttribute(icon, "data-connectiontype", "video");
+          connectIcon.classList.add("bi-webcam-fill");
+          addAttribute(connectIcon, "data-connectiontype", "video");
         } else {
-          icon.classList.add("bi-chat-dots-fill");
-          addAttribute(icon, "data-connectiontype", "text");
+          connectIcon.classList.add("bi-chat-dots-fill");
+          addAttribute(connectIcon, "data-connectiontype", "text");
         }
       });
 
@@ -125,12 +141,16 @@ export const updateUsersList = async (
       rejectButton.innerHTML = `<strong>Reject</strong>`;
 
       // Register click handler for the item element
-      addClickHandler(icon, listItemClickHandler);
+      addClickHandler(connectIcon, listItemClickHandler);
+      addClickHandler(blockIcon, (e) => {
+        const target = e.target.id.split("-")[1];
+        blockUser(currentUser, target);
+      });
       addClickHandler(acceptButton, () => {
         acceptCall(
           uObj._id,
           document.querySelector("#rmtid-input").value,
-          icon.dataset.connectiontype
+          connectIcon.dataset.connectiontype
         );
         callRequestContainer.classList.remove("hide");
       });

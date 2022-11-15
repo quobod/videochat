@@ -49,7 +49,8 @@ export const registerSocketEvents = (socket) => {
       listItemClickHandler,
       detectWebcam,
       acceptCall,
-      rejectCall
+      rejectCall,
+      blockUser
     );
   });
 
@@ -185,6 +186,10 @@ function rejectCall(senderUid, receiverUid) {
   userDetails.sender = senderUid;
   userDetails.receiver = receiverUid;
   socketIO.emit("callrejected", userDetails);
+}
+
+function blockUser(blockerUid, blockeeUid) {
+  dlog(`${blockerUid} blocked ${blockeeUid}`);
 }
 
 function createRoom(roomName) {

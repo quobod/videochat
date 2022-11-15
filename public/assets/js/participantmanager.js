@@ -133,6 +133,7 @@ export const remoteParticipantHandler = (participant) => {
 
   const parent = getElement("remote");
   const localPart = newElement("div");
+  const rmtIdInput = document.querySelector("#rmtid-input");
 
   // Add element attributes
 

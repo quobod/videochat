@@ -265,7 +265,7 @@ export const showCallAlert = (userDetails) => {
 };
 
 export const showCallResponse = (userDetails) => {
-  const { userInfo, response, alertType } = userDetails;
+  const { receiver, response, alertType } = userDetails;
   const messageParent = document.querySelector("#message-container");
   const alert = newElement("div");
   const alertCloseButton = newElement("button");
@@ -291,7 +291,7 @@ export const showCallResponse = (userDetails) => {
 
   // Alert title
   strong.innerHTML = `${cap(
-    userInfo.fname
+    receiver.fname
   )} ${response} your connection request`;
 
   /* Append elements */

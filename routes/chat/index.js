@@ -1,21 +1,24 @@
 import { Router } from "express";
 import { signedIn } from "../../middleware/AuthMiddleware.js";
 import {
-  enterRoom,
   createProfile,
-  createRoomToken,
-  joinAsPeer,
+  createRoom,
+  getRoomToken,
+  enterRoom,
+  connectRoom,
 } from "../../controllers/chat/index.js";
 
 const chat = Router();
 
-chat.route("/room").get(signedIn, enterRoom);
-
 chat.route("/profile/create/:uid").get(signedIn, createProfile);
 
-chat.route("/room/create").post(signedIn, createRoomToken);
+chat.route("/room/create").post(signedIn, createRoom);
 
-chat.route("/room/join").get(signedIn, joinAsPeer);
+chat.route("/room/gettoken").post(signedIn, getRoomToken);
+
+chat.route("/room/enter").get(signedIn, enterRoom);
+
+chat.route("/room/connect").get(signedIn, connectRoom);
 
 // chat.route("/block/:userId").post(blockUser);
 

@@ -1,5 +1,5 @@
 import { parse, stringify } from "./utils.js";
-import { log, dlog } from "./clientutils.js";
+import { log, dlog, tlog } from "./clientutils.js";
 import {
   updateUsersList,
   showMessage,
@@ -121,14 +121,24 @@ export const registerSocketEvents = (socket) => {
   socket.on("connectionrequestresponse", (data) => {
     const { responseData } = data;
     const userReponseData = parse(responseData);
-    const { userInfo, response, roomName, connType, sender } = userReponseData;
+    const { receiver, response, roomName, connType, sender } = userReponseData;
 
-    dlog(`User ${userInfo.fname} ${response} your request`);
+    dlog(`Made it to connectionrequestresponse`);
 
     if (response == "accepted") {
+      dlog(`User ${receiver.fname} ${response} your request`);
+
       userReponseData.alertType = "alert-success";
       showCallResponse(userReponseData);
-      joinRoom(roomName, connType, sender, userInfo._id);
+      createRoom(roomName);
+      userDetails = {};
+      userDetails.sender = sender;
+      userDetails.receiver = receiver;
+      userDetails.roomName = roomName;
+      userDetails.connectionType = connType;
+      userDetails.from = `sender`;
+      socket.emit("enterroom", userDetails);
+      getRoomTokenAndEnterRoom(roomName, connType, sender, receiver._id);
     } else if (response == "rejected") {
       userReponseData.alertType = "alert-warning";
       showCallResponse(userReponseData);
@@ -139,9 +149,8 @@ export const registerSocketEvents = (socket) => {
 
   socket.on("enterroom", (data) => {
     userDetails = parse(data);
-    const { roomName, token, connectionType, receiver, sender } = userDetails;
-
-    enterRoom(roomName, token, connectionType, sender, receiver);
+    const { roomName, connectionType, sender, receiver } = userDetails;
+    getRoomTokenAndEnterRoom(roomName, connectionType, sender, receiver._id);
   });
 };
 
@@ -178,7 +187,7 @@ function rejectCall(senderUid, receiverUid) {
   socketIO.emit("callrejected", userDetails);
 }
 
-function joinRoom(roomName, connectionType, senderId, receiverId) {
+function createRoom(roomName) {
   let xmlHttp;
 
   try {
@@ -197,45 +206,82 @@ function joinRoom(roomName, connectionType, senderId, receiverId) {
       if (responseText) {
         // log(`\n\tResponse Text: ${stringify(responseText)}\n`);
         const responseJson = parse(responseText);
-        const token = responseJson.token;
         const status = responseJson.status;
-        const roomName = responseJson.roomName;
-        const connectionType = responseJson.connectionType;
-        const senderId = responseJson.senderId;
 
         if (status) {
           dlog(
-            `roomName:\t${roomName}\nConn Type:\t${connectionType}\nSender:\t${senderId}\nReceiver:\t${receiverId}\nToken:\t${token}\n`,
-            "sender xhr request"
+            `room:\t${roomName} successfully created.`,
+            "createRoom xhr post"
           );
+        } else {
+          const cause = responseJson.cause;
+          const detail = responseJson.detail;
+          const err = responseJson.err;
 
-          userDetails = {};
-          userDetails.sender = senderId;
-          userDetails.receiver = receiverId;
-          userDetails.roomName = roomName;
-          userDetails.connectionType = connectionType;
-          userDetails.token = token;
-          socketIO.emit("enterroom", userDetails);
-          // location.href = `/chat/room/join?token=${token}&roomName=${roomName}&connectionType=${connectionType}&senderId=${senderId}`;
+          dlog(
+            `Cause:\t${cause}\nDetails:\t${detail}\nError:\n\t${err}\n\n`,
+            `createRoom xhr post`
+          );
         }
+        return;
       }
     };
 
-    xmlHttp.send(
-      `roomName=${roomName}&connectionType=${connectionType}&senderId=${senderId}`,
-      true
-    );
+    xmlHttp.send(`roomName=${roomName}`, true);
   } catch (err) {
     tlog(err);
     return;
   }
 }
 
-function enterRoom(roomName, token, connectionType, senderId, myId) {
+function getRoomTokenAndEnterRoom(
+  roomName,
+  connectionType,
+  senderId,
+  receiverId
+) {
   let xmlHttp;
 
-  dlog(
-    `roomName:\t${roomName}\nSender:\t${senderId}\nMy ID:\t${myId}\nConn Type:\t${connectionType}\nToken:\t${token}\n`,
-    "receiver xhr request"
-  );
+  try {
+    xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.open("POST", `/chat/room/gettoken`);
+
+    xmlHttp.setRequestHeader(
+      "Content-type",
+      "application/x-www-form-urlencoded"
+    );
+
+    xmlHttp.onload = () => {
+      const responseText = xmlHttp.responseText;
+
+      if (responseText) {
+        // log(`\n\tResponse Text: ${stringify(responseText)}\n`);
+        const responseJson = parse(responseText);
+        const status = responseJson.status;
+        const _roomName = responseJson.roomName;
+        const _connectionType = responseJson.connectionType;
+        const _senderId = responseJson.senderId;
+        const _receiverId = responseJson.receiverId;
+        const _token = responseJson.token;
+
+        if (status) {
+          dlog(
+            `roomName:\t${_roomName}\nConn Type:\t${_connectionType}\nSender:\t${_senderId}\nReceiver:\t${_receiverId}\nToken:\t${_token}\n`,
+            "sender xhr request"
+          );
+
+          location.href = `/chat/room/connect?roomName=${roomName}&connectionType=${connectionType}&senderId=${senderId}&receiverId=${receiverId}&token=${_token}`;
+        }
+      }
+    };
+
+    xmlHttp.send(
+      `roomName=${roomName}&connectionType=${connectionType}&senderId=${senderId}&receiverId=${receiverId}`,
+      true
+    );
+  } catch (err) {
+    tlog(err);
+    return;
+  }
 }

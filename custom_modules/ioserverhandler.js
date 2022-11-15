@@ -13,41 +13,44 @@ export default (io) => {
 
     socket.on("registerme", (data) => {
       const { uid } = data;
-      const user = userManager.getUser(uid);
-      addCUser(uid);
 
-      if (!user) {
-        User.findOne({ _id: `${uid}` }, (err, doc) => {
-          if (err) {
-            log(`-----------------------------------`);
-            log(err);
-            log(`-----------------------------------\n`);
-            return;
-          }
+      if (uid) {
+        const user = userManager.getUser(uid);
+        addCUser(uid);
 
-          if (doc) {
-            const regUser = Object.assign({
-              ...{
-                fname: doc.fname,
-                lname: doc.lname,
-                email: doc.email,
-                _id: doc._id,
-                ...doc.member,
-              },
-              ...{ sid: socket.id },
-            });
-
-            const addedUser = userManager.addUser(regUser);
-
-            if (addedUser) {
-              log(`User ${regUser.fname} successfully registered`);
-              io.to(socket.id).emit("registered", { uid: uid });
-              io.emit("updateonlineuserlist", {
-                users: stringify(userManager.getUsers()),
-              });
+        if (!user) {
+          User.findOne({ _id: `${uid}` }, (err, doc) => {
+            if (err) {
+              log(`-----------------------------------`);
+              log(err);
+              log(`-----------------------------------\n`);
+              return;
             }
-          }
-        }).populate("member");
+
+            if (doc) {
+              const regUser = Object.assign({
+                ...{
+                  fname: doc.fname,
+                  lname: doc.lname,
+                  email: doc.email,
+                  _id: doc._id,
+                  ...doc.member,
+                },
+                ...{ sid: socket.id },
+              });
+
+              const addedUser = userManager.addUser(regUser);
+
+              if (addedUser) {
+                log(`User ${regUser.fname} successfully registered\n\n`);
+                io.to(socket.id).emit("registered", { uid: uid });
+                io.emit("updateonlineuserlist", {
+                  users: stringify(userManager.getUsers()),
+                });
+              }
+            }
+          }).populate("member");
+        }
       }
     });
 
@@ -57,7 +60,7 @@ export default (io) => {
       const user = userManager.getUser(uid);
 
       if (user) {
-        log(`Updating user ${user.fname}`);
+        log(`Updating user ${user.fname}\n\n`);
         if (hasDoc) {
           const userDoc = parse(doc);
 
@@ -101,7 +104,7 @@ export default (io) => {
 
       if (userSender && userReceiver) {
         log(
-          `${userSender.fname} is requesting a ${conntype} connection with ${userReceiver.fname}`
+          `${userSender.fname} is requesting a ${conntype} connection with ${userReceiver.fname}\n\n`
         );
         io.to(userSender.sid).emit("clickeduser", {
           strUser: stringify(userReceiver),
@@ -127,12 +130,12 @@ export default (io) => {
 
       if (userSender && userReceiver) {
         log(
-          `${userSender.fname} is requesting a connection with ${userReceiver.fname}`
+          `${userSender.fname} is requesting a connection with ${userReceiver.fname}\n\n`
         );
 
-        log(
-          `Sender's SID: ${userSender.sid}\tReceiver's SID: ${userReceiver.sid}`
-        );
+        // log(
+        //   `Sender's SID: ${userSender.sid}\tReceiver's SID: ${userReceiver.sid}`
+        // );
 
         io.to(userReceiver.sid).emit("connectionrequested", {
           strSender: strUserSender,
@@ -148,12 +151,12 @@ export default (io) => {
 
       if (userSender && userReceiver) {
         log(
-          `${userReceiver.fname} accepted ${userSender.fname}'s ${connType} connection request`
+          `${userReceiver.fname} accepted ${userSender.fname}'s ${connType} connection request\n\n`
         );
 
         const response = "accepted";
         const strSenderResponseData = stringify({
-          userInfo: userReceiver,
+          receiver: userReceiver,
           response,
           roomName,
           connType,
@@ -189,24 +192,24 @@ export default (io) => {
     });
 
     socket.on("enterroom", (data) => {
-      const { sender, receiver, roomName, connectionType, token } = data;
-      const userReceiver = userManager.getUser(receiver);
+      const { sender, receiver, roomName, connectionType, from } = data;
       const userSender = userManager.getUser(sender);
 
-      if (userReceiver && userSender) {
-        log(
-          `${userReceiver.fname} is joining room ${roomName} as a ${connectionType} connection with token ${token}\n`
-        );
+      log(`made it to enterroom socket event`);
 
-        const strUserDetails = stringify({
-          sender,
-          receiver,
-          roomName,
-          connectionType,
-          token,
-        });
+      log(
+        `${receiver.fname} is joining room ${roomName} as a ${connectionType} connection\n\n`
+      );
 
-        io.to(userReceiver.sid).emit("enterroom", strUserDetails);
+      const strUserDetails = stringify({
+        sender,
+        receiver,
+        roomName,
+        connectionType,
+      });
+
+      if (from == "sender") {
+        io.to(receiver.sid).emit("enterroom", strUserDetails);
       }
     });
 

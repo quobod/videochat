@@ -7,7 +7,7 @@
         <div class="container-fluid">
             <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/chat/room">Exit</a>
+                    <a class="nav-link active" aria-current="page" href="/chat/room/enter">Exit</a>
                 </li>
             </ul>
         </div>
@@ -19,7 +19,10 @@
         <ul id="users-parent" class="list-group list-group-flush online-users"></ul>
     </div>
 
-    <div class="col-12 conn-parent"></div>
+    <div class="col-12 conn-parent">
+        <div class="local"></div>
+        <div class="remote"></div>
+    </div>
 
     <div id="messenger-parent" class="col-md-10 mt-sm-4"></div>
 </div>
@@ -27,4 +30,5 @@
 <input type="hidden" id="roomname-input" value="{{roomName}}">
 <input type="hidden" id="connectiontype-input" value="{{connectionType}}">
 <input type="hidden" id="senderid-input" value="{{senderId}}">
+<input type="hidden" id="receiverid-input" value="{{receiverId}}">
 <input type="hidden" id="token-input" value="{{token}}">

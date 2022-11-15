@@ -17,7 +17,6 @@ const logger = bunyan.createLogger({ name: "Chat Controller" });
 const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz", 13);
 const AccessToken = twilio.jwt.AccessToken;
 const VideoGrant = AccessToken.VideoGrant;
-let nameOfRoom, token;
 
 const findOrCreateRoom = async (roomName) => {
   let twilioClient;
@@ -66,81 +65,75 @@ const getAccessToken = (roomName) => {
 //  @desc           Create room and token
 //  @route          POST /chat/room/create
 //  @access         Private
-export const createRoomToken = asyncHandler(async (req, res) => {
+export const createRoom = asyncHandler(async (req, res) => {
   logger.info(`POST: /chat/room/create`);
   const user = req.user.withoutPassword();
 
-  const { roomName, connectionType, senderId } = req.body;
+  const { roomName } = req.body;
 
-  if (user._id == senderId) {
-    dlog(`${user.fname} requests a token for room ${roomName}`);
+  try {
+    // find or create a room with the given roomName
+    findOrCreateRoom(roomName);
 
-    try {
-      // find or create a room with the given roomName
-      findOrCreateRoom(roomName);
-      nameOfRoom = roomName;
+    dlog(`Room ${roomName} created\n\n`);
 
-      // generate an Access Token for a participant in this room
-      token = getAccessToken(roomName);
-
-      if (token) {
-        dlog(`Created Token`);
-        return res.json({
-          token,
-          status: true,
-          roomName,
-          connectionType,
-          senderId,
-        });
-      } else {
-        dlog(`Token Failure`);
-        return res.json({ status: false, cause: `Failed to create token` });
-      }
-    } catch (err) {
-      dlog(`joinRoom error\n\t\t${stringify(err)}`);
-      return res.json({
-        status: false,
-        cause: `Server-side Error`,
-        detail: `user controller.createRoom method.`,
-        err,
-      });
-    }
+    return res.json({
+      status: true,
+    });
+  } catch (err) {
+    dlog(`Error creating room ${roomName}\n\tError:\t${stringify(err)}`);
+    return res.json({
+      status: false,
+      cause: `Server-side Error`,
+      detail: `user controller.createRoom method.`,
+      err,
+    });
   }
 });
 
 //  @desc           Video Chat
-//  @route          GET /user/room/join
+//  @route          POST /chat/room/gettoken
 //  @access         Private
-export const joinAsPeer = asyncHandler(async (req, res) => {
-  logger.info(`GET: /user/room/join`);
+export const getRoomToken = asyncHandler(async (req, res) => {
+  logger.info(`POST: /chat/room/gettoken`);
   const user = req.user.withoutPassword();
 
-  const { roomName, connectionType, senderId, token } = req.query;
+  const { roomName, connectionType, senderId, receiverId } = req.body;
 
-  dlog(
-    `Joining room data: ${stringify(req.query)}\nReferrer:\t ${req.get(
-      "referrer"
-    )}`
-  );
+  dlog(`made it to getRoomToken\t${roomName}`);
 
-  res.render("chat/peers", {
-    title: "Peers",
-    uid: user._id,
-    enteredroom: true,
-    signedin: true,
-    peers: true,
-    roomName,
-    connectionType,
-    senderId,
-    token,
-  });
+  dlog(`User ${user.fname} is entering chat room ${roomName}`);
+
+  try {
+    const token = getAccessToken(roomName);
+
+    if (token) {
+      dlog(`Received access token\nReferrer:\t ${req.get("referrer")}`);
+
+      return res.json({
+        status: true,
+        roomName,
+        connectionType,
+        senderId,
+        receiverId,
+        token,
+        referrer: req.get("referrer") || false,
+      });
+    }
+  } catch (err) {
+    return res.json({
+      status: false,
+      cause: `server-side: getRoomToken method`,
+      error: err,
+    });
+  }
 });
 
 //  @desc           Chat Room
-//  @route          GET /chat/room
+//  @route          GET /chat/room/enter
 //  @access         Private
 export const enterRoom = asyncHandler(async (req, res) => {
-  logger.info(`GET: /chat/room`);
+  logger.info(`GET: /chat/room/enter`);
 
   try {
     dlog(`${req.user.fname} entered chat room`);
@@ -155,6 +148,28 @@ export const enterRoom = asyncHandler(async (req, res) => {
     tlog(err);
     res.status(200).json({ status: JSON.stringify(err) });
   }
+});
+
+//  @desc           Chat Room Connect
+//  @route          GET /chat/room/connect
+//  @access         Private
+export const connectRoom = asyncHandler(async (req, res) => {
+  logger.info(`GET: /chat/room/connect`);
+
+  // Get query params
+  const { roomName, connectionType, senderId, receiverId, token } = req.query;
+
+  res.render("chat/peers", {
+    title: `${roomName}`,
+    signedin: true,
+    enteredroom: true,
+    peers: true,
+    roomName,
+    connectionType,
+    senderId,
+    receiverId,
+    token,
+  });
 });
 
 //  @desc           Blocked Users

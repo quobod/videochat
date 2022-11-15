@@ -19,6 +19,13 @@ import {
   countChildren,
   removeChild,
 } from "./computils.js";
+
+import {
+  localParticipantHandler,
+  remoteParticipantHandler,
+  handleDisconnection,
+  logConnectedParticipants,
+} from "./participantmanager.js";
 // import { Twilio } from "../../../node_modules/twilio-video/dist/twilio-video";
 
 const rmtId = getElement("rmtid-input").value;
@@ -29,43 +36,44 @@ const brand = getElement("navbar-brand");
 const token = getElement("token-input").value;
 
 const initRoom = async () => {
-  if (rmtId == senderId) {
-    brand.innerHTML = `Room ID: ${roomName}`;
-    let room = null;
+  brand.innerHTML = `Room ID: ${roomName}`;
+  let room = null;
 
-    if (Twilio) {
-      try {
-        if (connType.trim().toLowerCase() === "video") {
-          room = await Twilio.Video.connect(token, {
-            room: roomName,
-            audio: { name: "microphone" },
-            video: { name: "camera" },
-            networkQuality: {
-              local: 3, // LocalParticipant's Network Quality verbosity [1 - 3]
-              remote: 3, // RemoteParticipants' Network Quality verbosity [0 - 3]
-            },
-          });
-        } else {
-          room = await Twilio.Video.connect(token, {
-            room: roomName,
-            audio: { name: "microphone" },
-            video: false,
-            networkQuality: {
-              local: 3, // LocalParticipant's Network Quality verbosity [1 - 3]
-              remote: 3, // RemoteParticipants' Network Quality verbosity [0 - 3]
-            },
-          });
-        }
-      } catch (err) {
-        dlog(err);
-        return null;
+  if (Twilio) {
+    try {
+      if (connType.trim().toLowerCase() === "video") {
+        room = await Twilio.Video.connect(token, {
+          room: roomName,
+          audio: true,
+          video: { width: 640 },
+          networkQuality: {
+            local: 3, // LocalParticipant's Network Quality verbosity [1 - 3]
+            remote: 3, // RemoteParticipants' Network Quality verbosity [0 - 3]
+          },
+        });
+      } else {
+        room = await Twilio.Video.connect(token, {
+          room: roomName,
+          audio: true,
+          video: false,
+          networkQuality: {
+            local: 3, // LocalParticipant's Network Quality verbosity [1 - 3]
+            remote: 3, // RemoteParticipants' Network Quality verbosity [0 - 3]
+          },
+        });
       }
-    } else {
-      dlog(`No Twilio`);
+      return room;
+    } catch (err) {
+      dlog(err);
+      return null;
     }
-
-    return room;
+  } else {
+    dlog(`No Twilio`);
+    return null;
   }
+
+  return room;
+  // }
 };
 
 const connectedPeers = initRoom();
@@ -76,17 +84,31 @@ if (null != connectedPeers) {
       log(room);
 
       // Handle local participant
-      // Handle each remote participant
+      localParticipantHandler(room.localParticipant);
+
       // Handle remote participant connect event
-      // Handle all participants disconnected event
-      // Handle disconnection with page events
+      room.participants.forEach(logConnectedParticipants);
+
+      // Handle participants connected event
+      room.on("participantConnected", remoteParticipantHandler);
+
+      // Handle participant diconnecte event
+      room.on("participantDisconnected", handleDisconnection);
+
+      // Disconnect room on page events
+      window.addEventListener("pagehide", () => room.disconnect());
+      window.addEventListener("beforeunload", () => room.disconnect());
     })
     .catch((err) => {
-      log(`\n\ninitRoom method caused an error`);
-      tlog(err);
-      log(`\n\n`);
-      return;
+      displayRoomError(err);
     });
 } else {
   log(`connected peers is null`);
+}
+
+function displayRoomError(err) {
+  log(`\n\ninitRoom method caused an error`);
+  tlog(err);
+  log(`\n\n`);
+  return;
 }

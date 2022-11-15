@@ -66,6 +66,7 @@ export const localParticipantHandler = (participant) => {
   // Add element attributes
 
   addAttribute(localPart, "id", participant.identity);
+  addAttribute(localPart, "class", "local-video-container");
 
   // Append elements
 
@@ -138,6 +139,7 @@ export const remoteParticipantHandler = (participant) => {
   // Add element attributes
 
   addAttribute(localPart, "id", participant.identity);
+  addAttribute(localPart, "class", "remote-video-container");
 
   // Append elements
 
@@ -153,8 +155,16 @@ export const remoteParticipantHandler = (participant) => {
 
   participant.on("trackPublished", (trackPub) => {
     function displayTrack(track) {
-      localPart.append(track.attach());
+      const remoteDiv = document.querySelector(`#${participant.identity}`);
+      remoteDiv.append(track.attach());
     }
+
+    if (trackPublication.track) {
+      displayTrack(trackPublication.track);
+    }
+
+    // listen for any new subscriptions to this track publication
+    trackPublication.on("subscribed", displayTrack);
   });
 
   participant.on("trackDisabled", (track) => {
@@ -202,4 +212,5 @@ export const remoteParticipantHandler = (participant) => {
 
 export const logConnectedParticipants = (participant) => {
   dlog(`Participant ${participant.identity}`);
+  remoteParticipantHandler(participant);
 };

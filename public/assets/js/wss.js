@@ -190,6 +190,10 @@ function rejectCall(senderUid, receiverUid) {
 
 function blockUser(blockerUid, blockeeUid) {
   dlog(`${blockerUid} blocked ${blockeeUid}`);
+  userDetails = {};
+  userDetails.blocker = blockerUid;
+  userDetails.blockee = blockeeUid;
+  socketIO.emit("iblockedauser", userDetails);
 }
 
 function createRoom(roomName) {

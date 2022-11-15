@@ -223,6 +223,8 @@ export default (io) => {
         });
       }
     });
+
+    socket.on("iblockedauser", (data) => {});
   });
 };
 

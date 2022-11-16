@@ -54,6 +54,12 @@ export const handleDisconnection = (participant) => {
     `${participant.identity} disconnected`,
     `participantmanager: on disconnected`
   );
+
+  try {
+    document.querySelector(`#${participant.identity}`).remove();
+  } catch (err) {
+    return;
+  }
   // participantDisconnected({ rmtUser: rmtIdInput.value });
 };
 

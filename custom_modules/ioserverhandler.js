@@ -1,5 +1,5 @@
 import { customAlphabet } from "nanoid";
-import { log, cls, stringify, parse } from "./index.js";
+import { log, dlog, cls, stringify, parse } from "./index.js";
 import User from "../models/UserModel.js";
 import Chat from "../models/ChatProfile.js";
 import UM from "./usermanager.js";
@@ -181,7 +181,7 @@ export default (io) => {
 
         const response = "rejected";
         const strResponseData = stringify({
-          userInfo: userReceiver,
+          receiver: userReceiver,
           response,
         });
 
@@ -224,7 +224,15 @@ export default (io) => {
       }
     });
 
-    socket.on("iblockedauser", (data) => {});
+    socket.on("iblockedauser", (data) => {
+      const { blocker, blockee } = data;
+      const userBlocker = userManager.getUser(blocker);
+      const userBlockee = userManager.getUser(blockee);
+
+      if (userBlocker && userBlockee) {
+        dlog(`${userBlocker.fname} has blocked ${userBlockee.fname}`);
+      }
+    });
   });
 };
 

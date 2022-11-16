@@ -57,8 +57,9 @@ export const handleDisconnection = (participant) => {
   // participantDisconnected({ rmtUser: rmtIdInput.value });
 };
 
-export const localParticipantHandler = (participant) => {
+export const localParticipantHandler = (room) => {
   // Access parent element and create the child elements
+  const participant = room.localParticipant;
 
   const parent = getElement("local");
   const localPart = newElement("div");

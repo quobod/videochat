@@ -25,39 +25,11 @@
     display: block;
 }
 
-.local div.local-video-container video {
-    width: 25%;
-    top: 75%;
-    left: 50%;
-}
-
-div.local .local-video-container {
-    display: inline-block;
-
-}
-
-div.local {
-    position: absolute;
-    top: 300px;
-    left: 50%;
-    z-index: 1;
-}
-
-div.remote {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: fit-content;
-    z-index: -1;
-}
-
-.remote div.remote-video-container video {
-    width: 100%;
-    top: 0;
-    left: 0;
-
-}
 
 .bi:hover {
     cursor: pointer;
+}
+
+div.conn-parent:last-child div.remote-video-container video {
+    width: fit-content;
 }

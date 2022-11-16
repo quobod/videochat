@@ -62,7 +62,7 @@ const getAccessToken = (roomName) => {
   return token.toJwt();
 };
 
-//  @desc           Create room and token
+//  @desc           Create room
 //  @route          POST /chat/room/create
 //  @access         Private
 export const createRoom = asyncHandler(async (req, res) => {
@@ -134,13 +134,17 @@ export const getRoomToken = asyncHandler(async (req, res) => {
 //  @access         Private
 export const enterRoom = asyncHandler(async (req, res) => {
   logger.info(`GET: /chat/room/enter`);
+  const user = req.user.withoutPassword();
+  user.fname = cap(user.fname);
+  user.lname = cap(user.lname);
 
   try {
     dlog(`${req.user.fname} entered chat room`);
 
     res.render("chat/room", {
       title: "Room Dammit",
-      uid: req.user.withoutPassword()._id,
+      uid: user._id,
+      user,
       enteredroom: true,
       signedin: true,
     });

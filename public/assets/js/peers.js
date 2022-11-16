@@ -84,7 +84,7 @@ if (null != connectedPeers) {
       log(room);
 
       // Handle local participant
-      localParticipantHandler(room.localParticipant);
+      localParticipantHandler(room);
 
       // Handle remote participant connect event
       room.participants.forEach(logConnectedParticipants);

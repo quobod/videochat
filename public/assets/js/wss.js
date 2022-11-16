@@ -188,6 +188,8 @@ function rejectCall(senderUid, receiverUid) {
   socketIO.emit("callrejected", userDetails);
 }
 
+function noResponseToCall(senderUid, receiverUid) {}
+
 function blockUser(blockerUid, blockeeUid) {
   dlog(`${blockerUid} blocked ${blockeeUid}`);
   userDetails = {};

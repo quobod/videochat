@@ -182,12 +182,25 @@ export default (io) => {
         const response = "rejected";
         const strResponseData = stringify({
           receiver: userReceiver,
+          sender: userSender,
           response,
         });
 
         io.to(userSender.sid).emit("connectionrequestresponse", {
           responseData: strResponseData,
         });
+      }
+    });
+
+    socket.on("noresponsetocall", (data) => {
+      const { sender, receiver } = data;
+      const userSender = userManager.getUser(sender);
+      const userReceiver = userManager.getUser(receiver);
+
+      if (userSender && userReceiver) {
+        dlog(
+          `${userReceiver.fname} did not reposnd to ${userSender.fname}'s connection request`
+        );
       }
     });
 

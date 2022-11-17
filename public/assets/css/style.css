@@ -30,6 +30,30 @@
     cursor: pointer;
 }
 
-div.conn-parent:last-child div.remote-video-container video {
-    width: fit-content;
+
+.local-video-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+.local-video-container video {
+    width: 25%;
+    margin: 10px;
+    border-radius: 10px;
+    background: transparent;
+}
+
+.remote-video-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.remote-video-container video {
+    width: 100%;
+    border-radius: 10px;
+    margin: 0;
+    z-index: 99;
 }

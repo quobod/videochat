@@ -67,7 +67,7 @@ export const localParticipantHandler = (room) => {
   // Access parent element and create the child elements
   const participant = room.localParticipant;
 
-  const parent = getElement("local");
+  const parent = getElement("conn-parent");
   const localPart = newElement("div");
 
   // Add element attributes
@@ -139,7 +139,7 @@ export const localParticipantHandler = (room) => {
 export const remoteParticipantHandler = (participant) => {
   // Access parent element and create the child elements
 
-  const parent = getElement("remote");
+  const parent = getElement("conn-parent");
   const localPart = newElement("div");
   const rmtIdInput = document.querySelector("#rmtid-input");
 

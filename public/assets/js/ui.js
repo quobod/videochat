@@ -30,7 +30,7 @@ export const updateUsersList = async (
 
     log(stringify(uObj));
 
-    if (uObj._id != currentUser) {
+    if (uObj._id != currentUser && uObj.isVisible) {
       const userName = newElement("h6");
       const item = newElement("li");
       const container = newElement("div");
@@ -326,4 +326,59 @@ export const showCallResponse = (userDetails) => {
   setTimeout(() => {
     alert.remove();
   }, [7000]);
+};
+
+export const showMediaControls = (micControlHandler, videoControlHandler) => {
+  const parent = getElement("local-media-controls-parent");
+  const container = newElement("div");
+  const nav = newElement("nav");
+  const containerFluid = newElement("div");
+  const ul = newElement("ul");
+  const liRecord = newElement("li");
+  const liMicrophone = newElement("li");
+  const liVideo = newElement("li");
+  const liScreenShare = newElement("li");
+  const recordIcon = newElement("i");
+  const microphoneIcon = newElement("i");
+  const videoIcon = newElement("i");
+  const screenshareIcon = newElement("i");
+
+  // Add attributes
+  addAttribute(container, "class", "container");
+  addAttribute(nav, "class", "navbar navbar-expand-sm bg-light");
+  addAttribute(containerFluid, "class", "container-fluid");
+
+  // List
+  addAttribute(ul, "class", "navbar-nav position-relative controls");
+
+  // List items
+  addAttribute(liRecord, "class", "mx-4  d-flex align-items-center");
+  addAttribute(liMicrophone, "class", "mx-4  d-flex align-items-center");
+  addAttribute(liVideo, "class", "mx-4 a d-flex align-items-center");
+  addAttribute(liScreenShare, "class", "mx-4  d-flex align-items-center");
+
+  // Icons
+  addAttribute(recordIcon, "class", "mx-4 bi bi-record");
+  addAttribute(microphoneIcon, "class", "mx-4 bi bi-mic-fill");
+  addAttribute(videoIcon, "class", "mx-4 bi bi-camera-video-fill");
+  addAttribute(screenshareIcon, "class", "mx-4 bi bi-window-stack");
+
+  // Append comps
+  appendChild(parent, container);
+  appendChild(container, nav);
+  appendChild(nav, containerFluid);
+  appendChild(containerFluid, ul);
+  appendChild(ul, recordIcon);
+  appendChild(ul, microphoneIcon);
+  appendChild(ul, videoIcon);
+  appendChild(ul, screenshareIcon);
+
+  /*   appendChild(liRecord, recordIcon);
+  appendChild(liMicrophone, microphoneIcon);
+  appendChild(liVideo, videoIcon);
+  appendChild(liScreenShare, screenshareIcon); */
+
+  // Register click events
+  addClickHandler(microphoneIcon, micControlHandler);
+  addClickHandler(videoIcon, videoControlHandler);
 };

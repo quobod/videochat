@@ -34,7 +34,7 @@
 .local-video-container {
     position: absolute;
     top: 0;
-    left: 0;
+    left: 10px;
     z-index: 100;
 }
 
@@ -46,14 +46,20 @@
 }
 
 .remote-video-container {
-    position: absolute;
-    top: 0;
-    left: 0;
+    margin: 0;
 }
 
 .remote-video-container video {
     width: 100%;
     border-radius: 10px;
-    margin: 0;
     z-index: 99;
+}
+
+#local-media-controls-parent {
+    height: 300px;
+    overflow-y: scroll;
+}
+
+::-webkit-scrollbar {
+    -webkit-backface-visibility: hidden;
 }

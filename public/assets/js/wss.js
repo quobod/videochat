@@ -44,6 +44,7 @@ export const registerSocketEvents = (socket) => {
       );
       socket.emit("userclicked", userDetails);
     };
+
     updateUsersList(
       arrUsers,
       listItemClickHandler,
@@ -295,4 +296,8 @@ function getRoomTokenAndEnterRoom(
     tlog(err);
     return;
   }
+}
+
+function cloakMe() {
+  dlog(`Going invisible`);
 }

@@ -10,6 +10,8 @@ import { dlog, log } from "./clientutils.js";
 
 import { stringify, parse } from "./utils.js";
 
+import { showMediaControls } from "./ui.js";
+
 const printObject = (arg = {}, label = `participantmanager`) =>
   dlog(`${stringify(arg)}`, label);
 
@@ -69,6 +71,7 @@ export const localParticipantHandler = (room) => {
 
   const parent = getElement("conn-parent");
   const localPart = newElement("div");
+  const rmtIdInput = getElement("rmtid-input");
 
   // Add element attributes
 
@@ -134,6 +137,51 @@ export const localParticipantHandler = (room) => {
   });
 
   participant.on("disconnected", handleDisconnection);
+
+  const micControlHandler = (e) => {
+    const icon = e.target;
+    const cl = icon.classList;
+    let enabled = cl.contains("bi-mic-fill");
+
+    if (enabled) {
+      cl.remove("bi-mic-fill");
+      cl.add("bi-mic-mute-fill");
+      room.localParticipant.audioTracks.forEach((publication) => {
+        publication.track.disable();
+      });
+    } else {
+      cl.remove("bi-mic-mute-fill");
+      cl.add("bi-mic-fill");
+      room.localParticipant.audioTracks.forEach((publication) => {
+        publication.track.enable();
+      });
+    }
+
+    dlog(`Microphone icon clicked`);
+  };
+
+  const vidControlHandler = (e) => {
+    const icon = e.target;
+    const cl = icon.classList;
+    let enabled = cl.contains("bi-camera-video-fill");
+
+    if (enabled) {
+      cl.remove("bi-camera-video-fill");
+      cl.add("bi-camera-video-off-fill");
+      room.localParticipant.videoTracks.forEach((publication) => {
+        publication.track.disable();
+      });
+    } else {
+      cl.remove("bi-camera-video-off-fill");
+      cl.add("bi-camera-video-fill");
+      room.localParticipant.videoTracks.forEach((publication) => {
+        publication.track.enable();
+      });
+    }
+    dlog(`Video icon clicked`);
+  };
+
+  showMediaControls(micControlHandler, vidControlHandler);
 };
 
 export const remoteParticipantHandler = (participant) => {

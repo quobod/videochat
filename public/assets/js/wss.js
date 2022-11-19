@@ -22,14 +22,25 @@ export const registerSocketEvents = (socket) => {
 
   socket.on("updateonlineuserlist", (data) => {
     const { users } = data;
+    const currentUser = document.querySelector("#rmtid-input").value;
     dlog(`Received updated user list`);
 
     const arrUsers = [];
     const pUsers = parse(users);
+    const currentUserBlockedList = pUsers[currentUser].blockedUsers;
 
     for (const u in pUsers) {
       const user = pUsers[u];
-      arrUsers.push({ ...user });
+
+      if (user._id != currentUser) {
+        const index = currentUserBlockedList.findIndex((x) => x == user._id);
+
+        if (index != -1) {
+          continue;
+        } else {
+          arrUsers.push({ ...user });
+        }
+      }
     }
 
     const listItemClickHandler = (e) => {
@@ -51,7 +62,8 @@ export const registerSocketEvents = (socket) => {
       detectWebcam,
       acceptCall,
       rejectCall,
-      blockUser
+      blockUser,
+      userBlocked
     );
   });
 
@@ -300,4 +312,9 @@ function getRoomTokenAndEnterRoom(
 
 function cloakMe() {
   dlog(`Going invisible`);
+}
+
+function userBlocked(arrList, uid) {
+  const index = arrList.findIndex((x) => x == uid);
+  return index != -1;
 }

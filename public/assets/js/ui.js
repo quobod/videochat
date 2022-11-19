@@ -18,19 +18,18 @@ export const updateUsersList = async (
   detectWebcam,
   acceptCall,
   rejectCall,
-  blockUser
+  blockUser,
+  userBlocked
 ) => {
   const listParent = document.querySelector("#users-parent");
-  const currentUser = document.querySelector("#rmtid-input").value;
 
   removeChildren(listParent);
-
   for (const u in userList) {
     const uObj = userList[u];
 
-    log(stringify(uObj));
+    log(`Online User: ${stringify(uObj)}`);
 
-    if (uObj._id != currentUser && uObj.isVisible) {
+    if (uObj.isVisible) {
       const userName = newElement("h6");
       const item = newElement("li");
       const container = newElement("div");

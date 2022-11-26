@@ -22,14 +22,15 @@ export const updateUsersList = async (
   userBlocked
 ) => {
   const listParent = document.querySelector("#users-parent");
+  const currentUser = getElement("rmtid-input").value;
 
   removeChildren(listParent);
   for (const u in userList) {
     const uObj = userList[u];
 
-    log(`Online User: ${stringify(uObj)}`);
+    log(stringify(uObj));
 
-    if (uObj.isVisible) {
+    if (uObj.isVisible && !userBlocked(uObj.blockedUsers, currentUser)) {
       const userName = newElement("h6");
       const item = newElement("li");
       const container = newElement("div");
@@ -139,12 +140,15 @@ export const updateUsersList = async (
       acceptButton.innerHTML = `<strong>Accept</strong>`;
       rejectButton.innerHTML = `<strong>Reject</strong>`;
 
-      // Register click handler for the item element
+      // Register click handlers
+
       addClickHandler(connectIcon, listItemClickHandler);
+
       addClickHandler(blockIcon, (e) => {
         const target = e.target.id.split("-")[1];
         blockUser(currentUser, target);
       });
+
       addClickHandler(acceptButton, () => {
         acceptCall(
           uObj._id,
@@ -153,6 +157,7 @@ export const updateUsersList = async (
         );
         callRequestContainer.classList.remove("hide");
       });
+
       addClickHandler(rejectButton, () => {
         rejectCall(uObj._id, document.querySelector("#rmtid-input").value);
         callRequestContainer.classList.remove("hide");

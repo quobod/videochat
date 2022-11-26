@@ -1,4 +1,5 @@
 import { stringify, parse } from "./utils.js";
+
 import {
   getAttribute,
   log,
@@ -8,6 +9,7 @@ import {
   cls,
   tlog,
 } from "./clientutils.js";
+
 import {
   getElement,
   newElement,
@@ -26,7 +28,6 @@ import {
   handleDisconnection,
   logConnectedParticipants,
 } from "./participantmanager.js";
-// import { Twilio } from "../../../node_modules/twilio-video/dist/twilio-video";
 
 const rmtId = getElement("rmtid-input").value;
 const roomName = getElement("roomname-input").value;

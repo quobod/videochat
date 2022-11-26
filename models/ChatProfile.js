@@ -11,18 +11,26 @@ const chatSchema = new mongoose.Schema(
       default: "",
       unique: true,
     },
+    displayName: {
+      type: Object,
+      default: {
+        fname: true,
+        uname: false,
+      },
+    },
     isVisible: {
       type: Boolean,
       default: true,
     },
-    showFullName: {
-      type: Boolean,
-      default: true,
-    },
-    showEmail: {
+    public: {
       type: Boolean,
       default: false,
     },
+    friends: [
+      {
+        type: String,
+      },
+    ],
     blockedUsers: [
       {
         type: String,
@@ -42,6 +50,14 @@ chatSchema.methods.userIsBlocked = async function (uid) {
   });
 };
 
+chatSchema.methods.userIsFriend = async function (uid) {
+  this.friends.forEach((id) => {
+    if (id == uid) {
+      return true;
+    }
+  });
+};
+
 chatSchema.methods.blockUser = function (uid) {
   const userIndex = this.blockedUsers.findIndex((x) => x == uid);
 
@@ -50,11 +66,27 @@ chatSchema.methods.blockUser = function (uid) {
   }
 };
 
+chatSchema.methods.addFriend = function (uid) {
+  const userIndex = this.friends.findIndex((x) => x == uid);
+
+  if (userIndex == -1) {
+    this.friends.push(uid);
+  }
+};
+
 chatSchema.methods.unBlockUser = function (uid) {
   const userIndex = this.blockedUsers.findIndex((x) => x == uid);
 
   if (userIndex != -1) {
     this.blockedUsers = this.blockedUsers.filter((x) => x != uid);
+  }
+};
+
+chatSchema.methods.removeFriend = function (uid) {
+  const userIndex = this.friends.findIndex((x) => x == uid);
+
+  if (userIndex != -1) {
+    this.friends = this.friends.filter((x) => x != uid);
   }
 };
 

@@ -275,10 +275,114 @@ export const createProfile = asyncHandler(async (req, res) => {
     }
 
     if (!doc) {
-      Chat.create({ user: `${uid}`, uname: `uname-${uid}` });
+      Chat.create({
+        user: `${uid}`,
+        uname: `uname-${uid}`,
+        displayName: { fname: true, uname: false },
+        isVisible: true,
+        public: false,
+        blockedUsers: [],
+        friends: [],
+      });
       res.json({ status: true, hasDoc: false, doc: stringify(doc) });
     } else {
       res.json({ status: true, hasDoc: true, doc: stringify(doc) });
     }
   }).populate("user");
+});
+
+//  @desc           View user chat profile
+//  @route          GET /chat/profile/view/uid
+//  @access         Private
+export const viewProfile = asyncHandler(async (req, res) => {
+  logger.info(`GET: /chat/profle/view/uid`);
+
+  const { uid } = req.params;
+
+  dlog(`Route Parameter: ${uid}\n`);
+
+  Chat.findOne({ user: `${uid}` }, (err, doc) => {
+    if (err) {
+      console.log(`------------------------------------`);
+      console.log(err);
+      console.log(`------------------------------------\n`);
+      res.json({ status: false });
+    }
+
+    if (!doc) {
+      res.render({
+        title: `Profile`,
+        hasDoc: false,
+        chatprofile: true,
+      });
+    } else {
+      Chat.find((err, docs) => {
+        log(`${doc.user.fname}'s profile:\t${stringify(doc)}`);
+        res.render("chat/viewprofile", {
+          title: `${doc.user.fname}`,
+          hasDoc: true,
+          profile: doc,
+          uid,
+          chatprofile: true,
+          unames: docs,
+        });
+      });
+    }
+  }).populate("user");
+});
+
+//  @desc           Update user chat profile
+//  @route          POST /chat/profile/update
+//  @access         Private
+export const updateProfile = asyncHandler(async (req, res) => {
+  logger.info(`POST: /chat/profle/update`);
+  const user = req.user.withoutPassword();
+  const rmtid = user._id;
+  const data = req.body;
+
+  delete data.rmtid;
+
+  if (data.displayName == "uname") {
+    log(`display name: uname`);
+    data.displayName = { fname: false, uname: true };
+  } else {
+    log(`display name: fname`);
+    data.displayName = { fname: true, uname: false };
+  }
+
+  if ("isVisible" in data) {
+    log(`is visible`);
+    data.isVisible = true;
+  } else {
+    data.isVisible = false;
+  }
+
+  if ("public" in data) {
+    log(`is public`);
+    data.public = true;
+  } else {
+    data.public = false;
+  }
+
+  log(`\nChat Profile Form Data:\n\t${stringify(data)}\n`);
+
+  try {
+    let doc = await Chat.findOneAndUpdate({ user: `${rmtid}` }, data);
+    res.redirect(`/chat/profile/view/${rmtid}`);
+  } catch (err) {
+    log(`\n--------------------------------------------------`);
+    log(err);
+    log(`--------------------------------------------------\n`);
+    res.redirect(`/chat/profile/view/${rmtid}`);
+  }
+
+  /* try {
+    let doc = await Chat.findOneAndUpdate({ user: `${rmtid}` }, profileUpdate);
+    res.redirect(`/chat/profile/view/${rmtid}`);
+  } catch (err) {
+    log(`\n--------------------------------------------------`);
+    log(err);
+    log(`--------------------------------------------------\n`);
+    res.redirect(`/chat/profile/view/${rmtid}`);
+  } */
 });

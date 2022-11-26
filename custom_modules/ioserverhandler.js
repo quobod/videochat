@@ -60,7 +60,7 @@ export default (io) => {
       const user = userManager.getUser(uid);
 
       if (user) {
-        log(`Updating user ${user.fname}\n\n`);
+        // log(`Updating user ${user.fname}\n\n`);
         if (hasDoc) {
           const userDoc = parse(doc);
 
@@ -208,7 +208,7 @@ export default (io) => {
       const { sender, receiver, roomName, connectionType, from } = data;
       const userSender = userManager.getUser(sender);
 
-      log(`made it to enterroom socket event`);
+      // log(`made it to enterroom socket event`);
 
       log(
         `${receiver.fname} is joining room ${roomName} as a ${connectionType} connection\n\n`

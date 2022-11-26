@@ -1,5 +1,5 @@
 import { parse, stringify } from "./utils.js";
-import { log, dlog, tlog } from "./clientutils.js";
+import { log, dlog, tlog, getElement } from "./clientutils.js";
 import {
   updateUsersList,
   showMessage,
@@ -23,23 +23,16 @@ export const registerSocketEvents = (socket) => {
   socket.on("updateonlineuserlist", (data) => {
     const { users } = data;
     const currentUser = document.querySelector("#rmtid-input").value;
-    dlog(`Received updated user list`);
+    // dlog(`Received updated user list`);
 
     const arrUsers = [];
     const pUsers = parse(users);
-    const currentUserBlockedList = pUsers[currentUser].blockedUsers;
 
     for (const u in pUsers) {
       const user = pUsers[u];
 
       if (user._id != currentUser) {
-        const index = currentUserBlockedList.findIndex((x) => x == user._id);
-
-        if (index != -1) {
-          continue;
-        } else {
-          arrUsers.push({ ...user });
-        }
+        arrUsers.push({ ...user });
       }
     }
 
@@ -137,7 +130,7 @@ export const registerSocketEvents = (socket) => {
     const userReponseData = parse(responseData);
     const { receiver, response, roomName, connType, sender } = userReponseData;
 
-    dlog(`Made it to connectionrequestresponse`);
+    // dlog(`Made it to connectionrequestresponse`);
 
     if (response == "accepted") {
       dlog(`User ${receiver.fname} ${response} your request`);

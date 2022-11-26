@@ -10,6 +10,36 @@ export const addClickHandler = (theElement, handler) => {
   }
 };
 
+export const addKeyupHandler = (theElement, handler) => {
+  if (null != theElement && typeof handler == "function") {
+    addHandler(theElement, "keyup", handler);
+  }
+};
+
+export const addKeydownHandler = (theElement, handler) => {
+  if (null != theElement && typeof handler == "function") {
+    addHandler(theElement, "keydown", handler);
+  }
+};
+
+export const addOnFocusHandler = (theElement, handler) => {
+  if (null != theElement && typeof handler == "function") {
+    addHandler(theElement, "focus", handler);
+  }
+};
+
+export const addOnChangeHandler = (theElement, handler) => {
+  if (null != theElement && typeof handler == "function") {
+    addHandler(theElement, "change", handler);
+  }
+};
+
+export const addOffFocusHandler = (theElement, handler) => {
+  if (null != theElement && typeof handler == "function") {
+    addHandler(theElement, "focusout", handler);
+  }
+};
+
 export const addAttribute = (theElement, whichAttribute, attributeValue) => {
   if (null != theElement) {
     theElement.setAttribute(whichAttribute, attributeValue);

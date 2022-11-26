@@ -2,15 +2,21 @@ import { Router } from "express";
 import { signedIn } from "../../middleware/AuthMiddleware.js";
 import {
   createProfile,
+  viewProfile,
   createRoom,
   getRoomToken,
   enterRoom,
   connectRoom,
+  updateProfile,
 } from "../../controllers/chat/index.js";
 
 const chat = Router();
 
 chat.route("/profile/create/:uid").get(signedIn, createProfile);
+
+chat.route("/profile/view/:uid").get(signedIn, viewProfile);
+
+chat.route("/profile/update").post(signedIn, updateProfile);
 
 chat.route("/room/create").post(signedIn, createRoom);
 

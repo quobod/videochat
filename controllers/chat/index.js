@@ -328,7 +328,7 @@ export const viewProfile = asyncHandler(async (req, res) => {
           signedin: true,
           unames: docs,
         });
-      });
+      }).select("uname");
     }
   }).populate("user");
 });

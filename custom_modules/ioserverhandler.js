@@ -66,8 +66,10 @@ export default (io) => {
 
           user.uname = userDoc.uname;
           user.isVisible = userDoc.isVisible;
-          user.showFullName = userDoc.showFullName;
+          user.public = userDoc.public;
           user.blockedUsers = userDoc.blockedUsers;
+          user.friends = userDoc.friends;
+          user.displayName = userDoc.displayName;
 
           io.emit("updateonlineuserlist", {
             users: stringify(userManager.getUsers()),
@@ -83,8 +85,10 @@ export default (io) => {
               if (chat) {
                 user.uname = chat.uname;
                 user.isVisible = chat.isVisible;
-                user.showFullName = chat.showFullName;
+                user.public = chat.public;
                 user.blockedUsers = chat.blockedUsers;
+                user.friends = chat.friends;
+                user.displayName = chat.displayName;
 
                 io.emit("updateonlineuserlist", {
                   users: stringify(userManager.getUsers()),

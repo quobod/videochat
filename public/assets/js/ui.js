@@ -50,6 +50,9 @@ export const updateUsersList = async (
       const callRequestTitle = newElement("small");
       const connectIcon = newElement("i");
       const blockIcon = newElement("i");
+      const displayName = uObj.displayName.fname
+        ? `${uObj.fname}`
+        : `${uObj.uname}`;
 
       // Set attributes
 
@@ -136,7 +139,7 @@ export const updateUsersList = async (
 
       // Set text
 
-      userName.innerHTML = `<p id="p-${uObj._id}" style="font-size:small;margin:0;padding:3px;"><strong id="s-${uObj._id}">${uObj.fname}</strong></p>`;
+      userName.innerHTML = `<p id="p-${uObj._id}" style="font-size:small;margin:0;padding:3px;"><strong id="s-${uObj._id}">${displayName}</strong></p>`;
       acceptButton.innerHTML = `<strong>Accept</strong>`;
       rejectButton.innerHTML = `<strong>Reject</strong>`;
 

@@ -314,6 +314,7 @@ export const viewProfile = asyncHandler(async (req, res) => {
         title: `Profile`,
         hasDoc: false,
         chatprofile: true,
+        signedin: true,
       });
     } else {
       Chat.find((err, docs) => {
@@ -324,6 +325,7 @@ export const viewProfile = asyncHandler(async (req, res) => {
           profile: doc,
           uid,
           chatprofile: true,
+          signedin: true,
           unames: docs,
         });
       });
@@ -375,14 +377,4 @@ export const updateProfile = asyncHandler(async (req, res) => {
     log(`--------------------------------------------------\n`);
     res.redirect(`/chat/profile/view/${rmtid}`);
   }
-
-  /* try {
-    let doc = await Chat.findOneAndUpdate({ user: `${rmtid}` }, profileUpdate);
-    res.redirect(`/chat/profile/view/${rmtid}`);
-  } catch (err) {
-    log(`\n--------------------------------------------------`);
-    log(err);
-    log(`--------------------------------------------------\n`);
-    res.redirect(`/chat/profile/view/${rmtid}`);
-  } */
 });

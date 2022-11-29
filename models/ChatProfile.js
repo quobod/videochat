@@ -43,6 +43,7 @@ const chatSchema = new mongoose.Schema(
 );
 
 chatSchema.methods.userIsBlocked = async function (uid) {
+  console.log(`blockUser method fired: ${JSON.stringify(this.blockedUsers)}`);
   this.blockedUsers.forEach((id) => {
     if (id == uid) {
       return true;

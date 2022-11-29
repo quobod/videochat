@@ -197,11 +197,44 @@ function rejectCall(senderUid, receiverUid) {
 function noResponseToCall(senderUid, receiverUid) {}
 
 function blockUser(blockerUid, blockeeUid) {
-  dlog(`${blockerUid} blocked ${blockeeUid}`);
-  userDetails = {};
-  userDetails.blocker = blockerUid;
-  userDetails.blockee = blockeeUid;
-  socketIO.emit("iblockedauser", userDetails);
+  let xmlHttp;
+
+  try {
+    xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.open("POST", "/chat/block", true);
+
+    xmlHttp.setRequestHeader(
+      "Content-type",
+      "application/x-www-form-urlencoded"
+    );
+
+    xmlHttp.onload = () => {
+      const responseText = xmlHttp.responseText;
+
+      if (responseText) {
+        // log(`\n\tResponse Text: ${stringify(responseText)}\n`);
+        const responseJson = parse(responseText);
+        const status = responseJson.status;
+
+        if (status) {
+          dlog(`${blockerUid} blocked ${blockeeUid}`);
+          userDetails = {};
+          userDetails.blocker = blockerUid;
+          userDetails.blockee = blockeeUid;
+          socketIO.emit("iblockedauser", userDetails);
+        } else {
+          dlog(`Something went wrong blocking user`);
+        }
+        return;
+      }
+    };
+
+    xmlHttp.send(`blocker=${blockerUid}&blockee=${blockeeUid}`, true);
+  } catch (err) {
+    tlog(err);
+    return;
+  }
 }
 
 function createRoom(roomName) {

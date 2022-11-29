@@ -203,30 +203,28 @@ export const getBlockedList = asyncHandler(async (req, res) => {
 });
 
 //  @desc           Add user ID to blocked list
-//  @route          POST /users/block/:contactId
+//  @route          POST /chat/block/
 //  @access         Private
 export const blockUser = asyncHandler(async (req, res) => {
-  logger.info(`POST: /user/block/contactId`);
+  logger.info(`POST: /user/block`);
 
-  const { userId } = req.params;
-  const { rmtId } = req.body;
+  const { blocker, blockee } = req.body;
 
-  // dlog(`${rmtId} adding ${userId} to blocked list`);
+  dlog(`${blocker} adding ${blockee} to blocked list`);
 
-  User.findByIdAndUpdate(rmtId, { $push: { blockedUsers: `${userId}` } })
-    .then((doc) => {
-      dlog(`${stringify(doc)}`);
-      res.status(200).json({
-        blocked: true,
-        blockee: userId,
-        blocker: rmtId,
-        updatedList: doc.blockedUsers,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(200).json({ blocked: false, cause: err });
-    });
+  try {
+    const chatUser = await Chat.updateOne(
+      { user: `${blocker}` },
+      { $push: { blockedUsers: `${blockee}` } }
+    );
+    dlog(chatUser);
+    dlog(`---------------------------------------\n\n`);
+    return res.json({ status: true });
+  } catch (err) {
+    dlog(`Server side error blocking user`);
+    dlog(err);
+    return res.json({ status: false, cause: err });
+  }
 });
 
 //  @desc           Remove user ID from blocked list

@@ -8,6 +8,7 @@ import {
   enterRoom,
   connectRoom,
   updateProfile,
+  blockUser,
 } from "../../controllers/chat/index.js";
 
 const chat = Router();
@@ -26,7 +27,7 @@ chat.route("/room/enter").get(signedIn, enterRoom);
 
 chat.route("/room/connect").get(signedIn, connectRoom);
 
-// chat.route("/block/:userId").post(blockUser);
+chat.route("/block").post(signedIn, blockUser);
 
 // chat.route("/unblock/:userId").post(unblockUser);
 

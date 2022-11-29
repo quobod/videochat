@@ -70,7 +70,12 @@
                     <ul class="list-group">
                         {{#each profile.blockedUsers}}
                         <li class="list-group-item">
-                            {{.}}
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    {{.}}
+                                </span>
+                                <i class="bi bi-trash-fill"></i>
+                            </div>
                         </li>
                         {{/each}}
                     </ul>

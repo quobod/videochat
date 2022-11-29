@@ -248,6 +248,27 @@ export default (io) => {
 
       if (userBlocker && userBlockee) {
         dlog(`${userBlocker.fname} has blocked ${userBlockee.fname}`);
+
+        User.findOne({ _id: `${blocker}` }, (err, doc) => {
+          if (err) {
+            log(`-----------------------------------`);
+            log(err);
+            log(`-----------------------------------\n`);
+            return;
+          }
+
+          if (doc) {
+            const user = userManager.getUser(blocker);
+
+            if (user) {
+              user.blockedUsers = doc.blockedUsers;
+
+              io.emit("updateonlineuserlist", {
+                users: stringify(userManager.getUsers()),
+              });
+            }
+          }
+        }).populate("member");
       }
     });
   });

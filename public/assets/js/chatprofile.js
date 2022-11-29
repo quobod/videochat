@@ -1,4 +1,4 @@
-import { log } from "./clientutils.js";
+import { dlog, log } from "./clientutils.js";
 import { stringify, parse, stripTags } from "./utils.js";
 import {
   getElement,
@@ -14,6 +14,7 @@ const uNameInput = getElement("uName");
 const displayNameInput = getElement("displayName");
 const isVisibleInput = getElement("isVisible");
 const publicInput = getElement("public");
+const unblockUserIcons = getElements(".unblock");
 const originalUsername = uNameInput.value.trim();
 const usernames = getElements(".username");
 const unames = [];
@@ -63,6 +64,16 @@ addOnChangeHandler(publicInput, (e) => {
   checkUsername();
 });
 
+unblockUserIcons.forEach((icon) => {
+  addClickHandler(icon, (e) => {
+    const target = e.target.id.split("-")[1];
+    const blocker = getElement("rmtId").value;
+
+    dlog(`${blocker} is unblocking ${target}`);
+    unblockUser(blocker, target);
+  });
+});
+
 function nameTaken(str) {
   const index = unames.findIndex((x) => x == str);
   return index != -1;
@@ -82,5 +93,43 @@ function checkUsername() {
     if (!unameError.classList.contains("d-none")) {
       unameError.classList.add("d-none");
     }
+  }
+}
+
+function unblockUser(blockerUid, blockeeUid) {
+  let xmlHttp;
+
+  try {
+    xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.open("POST", "/chat/unblock", true);
+
+    xmlHttp.setRequestHeader(
+      "Content-type",
+      "application/x-www-form-urlencoded"
+    );
+
+    xmlHttp.onload = () => {
+      const responseText = xmlHttp.responseText;
+
+      if (responseText) {
+        // log(`\n\tResponse Text: ${stringify(responseText)}\n`);
+        const responseJson = parse(responseText);
+        const status = responseJson.status;
+
+        if (status) {
+          dlog(`${blockerUid} unblocked ${blockeeUid}`);
+          location.href = `/chat/profile/view/${blockerUid}`;
+        } else {
+          dlog(`Something went wrong blocking user`);
+        }
+        return;
+      }
+    };
+
+    xmlHttp.send(`blocker=${blockerUid}&blockee=${blockeeUid}`, true);
+  } catch (err) {
+    tlog(err);
+    return;
   }
 }

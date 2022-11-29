@@ -9,6 +9,7 @@ import {
   connectRoom,
   updateProfile,
   blockUser,
+  unblockUser,
 } from "../../controllers/chat/index.js";
 
 const chat = Router();
@@ -29,7 +30,7 @@ chat.route("/room/connect").get(signedIn, connectRoom);
 
 chat.route("/block").post(signedIn, blockUser);
 
-// chat.route("/unblock/:userId").post(unblockUser);
+chat.route("/unblock").post(signedIn, unblockUser);
 
 // chat.route("/get/blockedlist/:blocker").post(signedIn, getBlockedList);
 

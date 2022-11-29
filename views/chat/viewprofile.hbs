@@ -7,7 +7,7 @@
                     <div class="col-12 mb-3">
                         <strong>ID</strong>
                         <div class="input-group">
-                            <input type="text" name="rmtid" value="{{uid}}" class="form-control"
+                            <input type="text" id="rmtId" name="rmtid" value="{{uid}}" class="form-control"
                                 placeholder="First Name" readonly />
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                                 <span class="input-group-text">
                                     {{.}}
                                 </span>
-                                <i class="bi bi-trash-fill"></i>
+                                <i id="i-{{.}}" class="bi bi-trash-fill unblock"></i>
                             </div>
                         </li>
                         {{/each}}

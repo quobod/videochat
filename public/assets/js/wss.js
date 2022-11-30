@@ -22,11 +22,13 @@ export const registerSocketEvents = (socket) => {
 
   socket.on("updateonlineuserlist", (data) => {
     const { users } = data;
+    const pUsers = parse(users);
     const currentUser = document.querySelector("#rmtid-input").value;
-    // dlog(`Received updated user list`);
+    const currentUserBlockedList = pUsers[currentUser].blockedUsers;
+
+    log(`Current user blocked list: ${stringify(currentUserBlockedList)}`);
 
     const arrUsers = [];
-    const pUsers = parse(users);
 
     for (const u in pUsers) {
       const user = pUsers[u];
@@ -56,7 +58,9 @@ export const registerSocketEvents = (socket) => {
       acceptCall,
       rejectCall,
       blockUser,
-      userBlocked
+      userBlocked,
+      currentUserBlockedList,
+      unblockUser
     );
   });
 
@@ -343,4 +347,45 @@ function cloakMe() {
 function userBlocked(arrList, uid) {
   const index = arrList.findIndex((x) => x == uid);
   return index != -1;
+}
+
+function unblockUser(blockerUid, blockeeUid) {
+  let xmlHttp;
+
+  try {
+    xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.open("POST", "/chat/unblock", true);
+
+    xmlHttp.setRequestHeader(
+      "Content-type",
+      "application/x-www-form-urlencoded"
+    );
+
+    xmlHttp.onload = () => {
+      const responseText = xmlHttp.responseText;
+
+      if (responseText) {
+        // log(`\n\tResponse Text: ${stringify(responseText)}\n`);
+        const responseJson = parse(responseText);
+        const status = responseJson.status;
+
+        if (status) {
+          dlog(`${blockerUid} unblocked ${blockeeUid}`);
+          userDetails = {};
+          userDetails.blocker = blockerUid;
+          userDetails.blockee = blockeeUid;
+          socketIO.emit("iunblockedauser", userDetails);
+        } else {
+          dlog(`Something went wrong blocking user`);
+        }
+        return;
+      }
+    };
+
+    xmlHttp.send(`blocker=${blockerUid}&blockee=${blockeeUid}`, true);
+  } catch (err) {
+    tlog(err);
+    return;
+  }
 }

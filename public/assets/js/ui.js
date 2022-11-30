@@ -19,7 +19,9 @@ export const updateUsersList = async (
   acceptCall,
   rejectCall,
   blockUser,
-  userBlocked
+  userBlocked,
+  currentUserBlockedList,
+  unblockUser
 ) => {
   const listParent = document.querySelector("#users-parent");
   const currentUser = getElement("rmtid-input").value;
@@ -89,12 +91,12 @@ export const updateUsersList = async (
       addAttribute(connectIcon, "data-html", "true");
       addAttribute(connectIcon, "title", `Connect with ${uObj.fname}`);
 
-      addAttribute(blockIcon, "class", "bi bi-eye-slash-fill");
+      // addAttribute(blockIcon, "class", "bi bi-eye-slash-fill");
       addAttribute(blockIcon, "id", `blockicon-${uObj._id}`);
       addAttribute(blockIcon, "data-toggle", "tooltip");
       addAttribute(blockIcon, "data-placement", "right");
       addAttribute(blockIcon, "data-html", "true");
-      addAttribute(blockIcon, "title", `Block ${uObj.fname}`);
+      // addAttribute(blockIcon, "title", `Block ${uObj.fname}`);
 
       addAttribute(container, "class", "container-fluid");
       addAttribute(row, "class", "row");
@@ -147,10 +149,36 @@ export const updateUsersList = async (
 
       addClickHandler(connectIcon, listItemClickHandler);
 
-      addClickHandler(blockIcon, (e) => {
-        const target = e.target.id.split("-")[1];
-        blockUser(currentUser, target);
-      });
+      if (undefined != currentUserBlockedList) {
+        if (currentUserBlockedList.length > 0) {
+          const userIndex = currentUserBlockedList.findIndex(
+            (x) => x == uObj._id
+          );
+
+          if (userIndex != -1) {
+            addAttribute(blockIcon, "class", "bi bi-eye-fill");
+            addAttribute(blockIcon, "title", `Unblock ${uObj.fname}`);
+            addClickHandler(blockIcon, (e) => {
+              const target = e.target.id.split("-")[1];
+              unblockUser(currentUser, target);
+            });
+          } else {
+            addAttribute(blockIcon, "class", "bi bi-eye-slash-fill");
+            addAttribute(blockIcon, "title", `Block ${uObj.fname}`);
+            addClickHandler(blockIcon, (e) => {
+              const target = e.target.id.split("-")[1];
+              blockUser(currentUser, target);
+            });
+          }
+        } else {
+          addAttribute(blockIcon, "class", "bi bi-eye-slash-fill");
+          addAttribute(blockIcon, "title", `Block ${uObj.fname}`);
+          addClickHandler(blockIcon, (e) => {
+            const target = e.target.id.split("-")[1];
+            blockUser(currentUser, target);
+          });
+        }
+      }
 
       addClickHandler(acceptButton, () => {
         acceptCall(

@@ -255,6 +255,24 @@ export default (io) => {
         });
       }
     });
+
+    socket.on("iunblockedauser", (data) => {
+      const { blocker, blockee } = data;
+      const userBlocker = userManager.getUser(blocker);
+      const userBlockee = userManager.getUser(blockee);
+
+      if (userBlocker && userBlockee) {
+        dlog(`${userBlocker.fname} has unblocked ${userBlockee.fname}`);
+
+        userBlocker.blockedUsers = userBlocker.blockedUsers.filter(
+          (x) => x != blockee
+        );
+
+        io.emit("updateonlineuserlist", {
+          users: stringify(userManager.getUsers()),
+        });
+      }
+    });
   });
 };
 

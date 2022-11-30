@@ -1,6 +1,6 @@
 import { stringify, parse, stripTags } from "./utils.js";
 import { log, cls, dlog, addClickHandler } from "./clientutils.js";
-import { getElement } from "./computils.js";
+import { addKeyupHandler, getElement } from "./computils.js";
 
 if (window) {
   cls();
@@ -30,6 +30,19 @@ const submitButton = getElement("reset-submit-button");
 const divEmailError = getElement("divemailerror");
 const resetForm = getElement("reset-password");
 
+submitButton.disabled = true;
+
+addKeyupHandler(emailInput, (e) => {
+  const target = e.target;
+  const value = target.value.trim();
+  const sanitizedValue = stripTags(value);
+  target.value = sanitizedValue;
+  cls();
+  dlog(`${sanitizedValue}`);
+
+  submitButton.disabled = sanitizedValue.length > 0 ? false : true;
+});
+
 resetForm.addEventListener("submit", (e) => {
   e.preventDefault();
   validateEmail();
@@ -50,6 +63,7 @@ function validateEmail() {
 
     xmlHttp.onload = () => {
       const responseText = xmlHttp.responseText;
+      emailInput.value = "";
 
       if (responseText) {
         const responseJson = parse(responseText);

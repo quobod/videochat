@@ -37,7 +37,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   logger.info(`GET: /forgotpassword`);
 
   res.render("home/forgotpassword", {
-    title: "Validate",
+    title: "Authenticate",
     signedin: false,
     passwordreset: true,
   });

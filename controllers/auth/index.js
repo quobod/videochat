@@ -137,19 +137,21 @@ export const registerUser = (req, res, next) => {
 };
 
 // @desc        Forgot password
-// @route       POST /auth/forgotpassword
+// @route       POST /auth/validateuser
 // @access      Public
-export const forgotPassword = asyncHandler(async (req, res) => {
-  logger.info(`GET: /auth/forgotpassword`);
+export const validateUser = asyncHandler(async (req, res) => {
+  logger.info(`POST: /auth/validateuser`);
   const { email } = req.body;
 
   const client = await User.findOne({ email });
 
   if (!client) {
     return res
-      .status(404)
+      .status(200)
       .json({ status: false, cause: `User ${email} does not exist` });
   }
+
+  return res.status(200).json({ status: true });
 });
 
 export const testGenerateToken = asyncHandler(async (req, res) => {

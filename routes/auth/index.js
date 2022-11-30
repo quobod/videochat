@@ -1,5 +1,5 @@
 import { Router } from "express";
-
+import { signedOut } from "../../middleware/AuthMiddleware.js";
 import { body, check, validationResult } from "express-validator";
 import {
   registerUser,
@@ -7,7 +7,8 @@ import {
   userRegister,
   userSignin,
   userSignout,
-  generatePasswordResetToken,
+  validateUser,
+  // generatePasswordResetToken,
 } from "../../controllers/auth/index.js";
 
 const auth = Router();
@@ -35,7 +36,9 @@ auth
     registerUser
   );
 
-auth.route("/password/reset/generatetoken").get(generatePasswordResetToken);
+// auth.route("/password/reset/generatetoken").get(generatePasswordResetToken);
+
+auth.route("/validateuser").post(signedOut, validateUser);
 
 auth.route("/signout").get(userSignout);
 

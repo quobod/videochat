@@ -38,7 +38,11 @@
 <script src="/assets/js/chatprofile.js" type="module"></script>
 {{/if}}
 {{else}}
+{{#if passwordreset}}
+<script src="/assets/js/passwordresetscript.js" type="module"></script>
+{{else}}
 <script src="/assets/js/main.js" type="module"></script>
+{{/if}}
 {{/if}}
 
 

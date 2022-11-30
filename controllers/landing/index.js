@@ -8,8 +8,9 @@ const logger = bunyan.createLogger({ name: "Landing Controller" });
 // @access      Public
 export const landingPage = asyncHandler(async (req, res) => {
   logger.info(`GET /`);
-
-  log(`Route /\n${req}\n`);
+  log(req.method);
+  log(req.url);
+  log(req.headers);
 
   try {
     req.flash("success_msg", "Hey there");
@@ -27,4 +28,17 @@ export const landingPage = asyncHandler(async (req, res) => {
       cause: err.stackTrace,
     });
   }
+});
+
+// @desc        Forgot password
+// @route       GET /forgotpassword
+// @access      Public
+export const forgotPassword = asyncHandler(async (req, res) => {
+  logger.info(`GET: /forgotpassword`);
+
+  res.render("home/forgotpassword", {
+    title: "Validate",
+    signedin: false,
+    passwordreset: true,
+  });
 });

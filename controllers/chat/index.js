@@ -228,10 +228,10 @@ export const blockUser = asyncHandler(async (req, res) => {
 });
 
 //  @desc           Remove user ID from blocked list
-//  @route          POST /users/unblock/
+//  @route          POST /chat/unblock/
 //  @access         Private
 export const unblockUser = asyncHandler(async (req, res) => {
-  logger.info(`POST: /user/unblock`);
+  logger.info(`POST: /chat/unblock`);
 
   const { blocker, blockee } = req.body;
 

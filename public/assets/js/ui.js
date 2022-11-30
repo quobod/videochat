@@ -134,8 +134,8 @@ export const updateUsersList = async (
           connectIcon.classList.add("bi-webcam-fill");
           addAttribute(connectIcon, "data-connectiontype", "video");
         } else {
-          connectIcon.classList.add("bi-chat-dots-fill");
-          addAttribute(connectIcon, "data-connectiontype", "text");
+          connectIcon.classList.add("bi-mic-fill");
+          addAttribute(connectIcon, "data-connectiontype", "audio");
         }
       });
 

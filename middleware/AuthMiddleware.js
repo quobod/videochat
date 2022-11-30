@@ -1,7 +1,10 @@
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
+import bunyan from "bunyan";
 import { log } from "../custom_modules/index.js";
 import User from "../models/UserModel.js";
+
+const logger = bunyan.createLogger({ name: "AuthMiddleware" });
 
 export const protect = asyncHandler(async (req, res, next) => {
   let token;
@@ -32,6 +35,7 @@ export const protect = asyncHandler(async (req, res, next) => {
 });
 
 export const signedIn = asyncHandler(async (req, res, next) => {
+  logger.info(`signedIn`);
   if (req.isAuthenticated()) {
     next();
   } else {
@@ -40,6 +44,7 @@ export const signedIn = asyncHandler(async (req, res, next) => {
 });
 
 export const signedOut = asyncHandler(async (req, res, next) => {
+  logger.info(`signedOut`);
   if (!req.isAuthenticated()) {
     next();
   } else {
@@ -49,8 +54,8 @@ export const signedOut = asyncHandler(async (req, res, next) => {
 });
 
 export const reauthorize = asyncHandler(async (req, res, next) => {
+  logger.info(`reauthorize`);
   if (req.isAuthenticated()) {
-    console.log(`\nUser is signed in: ${req.isAuthenticated()}\n`);
     const user = req.user.withoutPassword();
 
     res.render("auth/signin", {

@@ -64,6 +64,7 @@ function validateEmail() {
     xmlHttp.onload = () => {
       const responseText = xmlHttp.responseText;
       emailInput.value = "";
+      submitButton.disabled = true;
 
       if (responseText) {
         const responseJson = parse(responseText);

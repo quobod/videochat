@@ -1,6 +1,6 @@
 import { stringify, parse, stripTags } from "./utils.js";
 import { log, cls, dlog, addClickHandler } from "./clientutils.js";
-import { addKeyupHandler, getElement } from "./computils.js";
+import { addKeyupHandler, addOnFocusHandler, getElement } from "./computils.js";
 
 if (window) {
   cls();
@@ -28,6 +28,7 @@ if (window) {
 const emailInput = getElement("email");
 const submitButton = getElement("reset-submit-button");
 const divEmailError = getElement("divemailerror");
+const emailErrorInput = getElement("emailerror");
 const resetForm = getElement("reset-password");
 
 submitButton.disabled = true;
@@ -41,6 +42,13 @@ addKeyupHandler(emailInput, (e) => {
   dlog(`${sanitizedValue}`);
 
   submitButton.disabled = sanitizedValue.length > 0 ? false : true;
+});
+
+addOnFocusHandler(emailInput, (e) => {
+  if (!divEmailError.classList.contains("d-none")) {
+    divEmailError.classList.add("d-none");
+    emailErrorInput.value = "";
+  }
 });
 
 resetForm.addEventListener("submit", (e) => {
@@ -72,10 +80,22 @@ function validateEmail() {
 
         if (status) {
           dlog(`User validated`);
+
+          if (!divEmailError.classList.contains("d-none")) {
+            divEmailError.classList.add("d-none");
+          }
+
+          emailErrorInput.value = "";
           //   location.href = `/chat/profile/view/${blockerUid}`;
         } else {
           const cause = responseJson.cause;
           dlog(`${cause}`);
+
+          if (divEmailError.classList.contains("d-none")) {
+            divEmailError.classList.remove("d-none");
+          }
+
+          emailErrorInput.value = `${cause}`;
         }
         return;
       }

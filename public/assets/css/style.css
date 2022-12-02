@@ -63,3 +63,15 @@
 ::-webkit-scrollbar {
     -webkit-backface-visibility: hidden;
 }
+
+#divemailerror span {
+    background: transparent;
+    border: none;
+}
+
+#divemailerror input {
+    border: none;
+    color: rgb(191, 9, 9);
+    font-weight: bolder;
+    font-size: 1rem;
+}

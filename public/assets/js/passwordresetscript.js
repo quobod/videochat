@@ -30,8 +30,10 @@ const submitButton = getElement("reset-submit-button");
 const divEmailError = getElement("divemailerror");
 const emailErrorInput = getElement("emailerror");
 const resetForm = getElement("reset-password");
+// const emailPattern = /(\w)+(\.(\w)+)?@(\w)+\.(\w){2,3}/i;
 
 submitButton.disabled = true;
+// emailInput.pattern = emailPattern;
 
 addKeyupHandler(emailInput, (e) => {
   const target = e.target;
@@ -39,7 +41,7 @@ addKeyupHandler(emailInput, (e) => {
   const sanitizedValue = stripTags(value);
   target.value = sanitizedValue;
   cls();
-  dlog(`${sanitizedValue}`);
+  dlog(`${sanitizedValue}\nPattern: ${target.pattern}`);
 
   submitButton.disabled = sanitizedValue.length > 0 ? false : true;
 });

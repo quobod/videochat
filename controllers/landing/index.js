@@ -49,8 +49,11 @@ export const forgotPassword = asyncHandler(async (req, res) => {
 export const resetPassword = asyncHandler(async (req, res) => {
   logger.info(`GET: /forgotpassword`);
 
+  const { email } = req.params;
+
   res.render("home/resetpassword", {
     title: "Reset Password",
+    email,
     signedin: false,
     resetpassword: true,
   });

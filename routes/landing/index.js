@@ -15,6 +15,6 @@ home.route("/").get(signedOut, csrfProtection, landingPage);
 
 home.route("/forgotpassword").get(signedOut, forgotPassword);
 
-home.route("/resetpassword").get(signedOut, resetPassword);
+home.route("/resetpassword/:email").get(signedOut, resetPassword);
 
 export default home;

@@ -73,7 +73,6 @@ function validateEmail() {
 
     xmlHttp.onload = () => {
       const responseText = xmlHttp.responseText;
-      emailInput.value = "";
       submitButton.disabled = true;
 
       if (responseText) {
@@ -88,7 +87,7 @@ function validateEmail() {
           }
 
           emailErrorInput.value = "";
-          location.href = `/resetpassword`;
+          location.href = `/resetpassword/${emailInput.value}`;
           //   location.href = `/chat/profile/view/${blockerUid}`;
         } else {
           const cause = responseJson.cause;

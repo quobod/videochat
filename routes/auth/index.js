@@ -8,6 +8,7 @@ import {
   userSignin,
   userSignout,
   validateUser,
+  resetPassword,
   // generatePasswordResetToken,
 } from "../../controllers/auth/index.js";
 
@@ -39,6 +40,8 @@ auth
 // auth.route("/password/reset/generatetoken").get(generatePasswordResetToken);
 
 auth.route("/validateuser").post(signedOut, validateUser);
+
+auth.route("/resetpassword").post(signedOut, resetPassword);
 
 auth.route("/signout").get(userSignout);
 

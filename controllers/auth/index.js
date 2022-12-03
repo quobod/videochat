@@ -154,6 +154,43 @@ export const validateUser = asyncHandler(async (req, res) => {
   return res.status(200).json({ status: true });
 });
 
+// @desc        Reset user's password
+// @route       POST /auth/resetpassword
+// @access      Public
+export const resetPassword = asyncHandler(async (req, res) => {
+  logger.info(`POST: /auth/resetpassword`);
+  const { email, pwd1, pwd2 } = req.body;
+
+  return res.status(200).json({ status: true });
+
+  // const client = await User.findOne({ email });
+
+  /* if (pwd1 !== pwd2) {
+    return res
+      .status(200)
+      .json({ status: false, cause: `Passwords don't match` });
+  }
+
+  try {
+    createHash(pwd1, (data) => {
+      const { status, original, payload } = data;
+
+      if (status) {
+        const saved = client.save({ password: `${payload}` });
+        console.log(`\n\n-----------------------------------`);
+        console.log(saved);
+        console.log(`-----------------------------------\n\n`);
+      } else {
+        return res.status(200).json({ status: false, cause: `${data.error}` });
+      }
+    });
+  } catch (err) {
+    return res
+      .status(200)
+      .json({ status: false, cause: `Passwords don't match` });
+  } */
+});
+
 export const testGenerateToken = asyncHandler(async (req, res) => {
   generateToken("test", (resp) => {
     if (resp.status) {

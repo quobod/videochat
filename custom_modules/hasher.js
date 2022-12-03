@@ -12,7 +12,7 @@ export const createHash = (arg1, cb) => {
       if (err) {
         return cb({ status: false, error: err.message });
       } else {
-        cb({
+        return cb({
           status: true,
           original: arg1,
           payload: hash,

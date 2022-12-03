@@ -17,7 +17,7 @@ if (window) {
   log(`UAgent:\t${userAgent}`);
   log(`Vendor:\t${vendor}`);
   log(`--------------------------------------------------------\n\n`);
-  log(`Password reset`);
+  log(`Validate email`);
 
   addEventListener("beforeunload", (event) => {
     log(`\n\tBefore unload\n`);
@@ -41,7 +41,7 @@ addKeyupHandler(emailInput, (e) => {
   const sanitizedValue = stripTags(value);
   target.value = sanitizedValue;
   cls();
-  dlog(`${sanitizedValue}\nPattern: ${target.pattern}`);
+  dlog(`${sanitizedValue}\n`);
 
   submitButton.disabled = sanitizedValue.length > 0 ? false : true;
 });
@@ -88,6 +88,7 @@ function validateEmail() {
           }
 
           emailErrorInput.value = "";
+          location.href = `/resetpassword`;
           //   location.href = `/chat/profile/view/${blockerUid}`;
         } else {
           const cause = responseJson.cause;

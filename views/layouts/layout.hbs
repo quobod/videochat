@@ -34,16 +34,21 @@
 <script src="/assets/js/peers.js" type="module"></script>
 {{/if}}
 {{/if}}
+
 {{#if chatprofile}}
 <script src="/assets/js/chatprofile.js" type="module"></script>
 {{/if}}
 {{else}}
-{{#if passwordreset}}
-<script src="/assets/js/passwordresetscript.js" type="module"></script>
-{{else}}
-<script src="/assets/js/main.js" type="module"></script>
+{{#if landing}}
+<script src="/assets/js/main.js"></script>
 {{/if}}
+{{#if forgotpassword}}
+<script src="/assets/js/validateemail.js" type="module"></script>
+{{/if}}
+{{#if resetpassword}}
+<script src="/assets/js/resetpassword.js" type="module"></script>
 {{/if}}
 
+{{/if}}
 
 </html>

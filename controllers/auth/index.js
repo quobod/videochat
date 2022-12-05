@@ -180,9 +180,6 @@ export const resetPassword = asyncHandler(async (req, res) => {
       if (status) {
         client.password = payload;
         const saved = client.save();
-        console.log(`\n\n---------------------------------------`);
-        console.log(saved);
-        console.log(`---------------------------------------\n\n`);
         return res.status(200).json({ status: true });
       } else {
         return res.status(200).json({ status: false });

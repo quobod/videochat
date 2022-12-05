@@ -12,22 +12,14 @@ const passportConfig = (passport) => {
       },
       (req, email, password, done) => {
         console.log(`\n\n\t\tMade it to passport login\n\n`);
-        // Match User
+        // Search user by email
+        // If user is found validate their password or return error
         User.findOne({ email: email })
           .then((user) => {
             if (!user) {
               req.flash("error_msg", "User not found");
               return done(null, false, { message: "User is not registered" });
             }
-
-            // Match Password
-            /* if (user.matchPassword(password)) {
-              req.flash("success_msg", "You're now signed in");
-              return done(null, user);
-            } else {
-              req.flash("error_msg", "Signin error ocurred");
-              return done(null, false, { message: "Invalid credentials" });
-            } */
 
             user
               .matchPassword(password)

@@ -99,7 +99,7 @@ function resetPassword() {
 
         if (status) {
           dlog(`Password updated`);
-          // location.href = `/`;
+          location.href = `/`;
         }
         return;
       }

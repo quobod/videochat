@@ -161,10 +161,6 @@ export const resetPassword = asyncHandler(async (req, res) => {
   logger.info(`POST: /auth/resetpassword`);
   const { email, pwd1, pwd2 } = req.body;
 
-  // return res.status(200).json({ status: true });
-
-  // const client = await User.findOne({ email });
-
   if (pwd1 !== pwd2) {
     return res
       .status(200)

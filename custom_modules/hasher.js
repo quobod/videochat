@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { customAlphabet } from "nanoid";
 
@@ -37,4 +38,19 @@ export const generateToken = (cb, arg = null) => {
       }
     });
   });
+};
+
+export const generateTokenString = (size = 32) => {
+  const generatedToken = crypto.randomBytes(size);
+  return generatedToken.toString("hex");
+};
+
+export const generateExpireToken = (expiration = 18000) =>
+  Date.now() + expiration;
+
+export const generateResetTokens = () => {
+  return {
+    resetToken: generateTokenString(),
+    expireToken: generateExpireToken(),
+  };
 };

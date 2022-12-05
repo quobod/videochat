@@ -21,13 +21,31 @@ const passportConfig = (passport) => {
             }
 
             // Match Password
-            if (user.matchPassword(password)) {
+            /* if (user.matchPassword(password)) {
               req.flash("success_msg", "You're now signed in");
               return done(null, user);
             } else {
               req.flash("error_msg", "Signin error ocurred");
               return done(null, false, { message: "Invalid credentials" });
-            }
+            } */
+
+            user
+              .matchPassword(password)
+              .then((matched) => {
+                console.log(`Password Matched?\t${matched}`);
+                if (matched) {
+                  req.flash("success_msg", "You're now signed in");
+                  return done(null, user);
+                } else {
+                  req.flash("error_msg", "Invalid credentials");
+                  return done(null, false, { message: "Invalid credentials" });
+                }
+              })
+              .catch((err) => {
+                console.log(`Match Error:\t${err}`);
+                req.flash("error_msg", "Signin error ocurred");
+                return done(null, false, { message: "Invalid credentials" });
+              });
           })
           .catch((err) => {
             return done(null, false, { message: `${err}` });
@@ -72,7 +90,7 @@ const passportConfig = (passport) => {
                 lname,
               });
 
-              createHash(password, (results) => {
+              createHash(pwd, (results) => {
                 if (results.status) {
                   const { original, payload } = results;
 

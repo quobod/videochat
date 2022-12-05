@@ -4,7 +4,7 @@ import passport from "passport";
 import { body, check, validationResult } from "express-validator";
 import User from "../../models/UserModel.js";
 import { stringify, parse } from "../../custom_modules/index.js";
-import { createHash, generateToken } from "../../custom_modules/hasher.js";
+import { createHash } from "../../custom_modules/index.js";
 
 const logger = bunyan.createLogger({ name: "Auth Controller" });
 
@@ -48,7 +48,7 @@ export const userSignin = asyncHandler(async (req, res) => {
 });
 
 // @desc        User Registration
-// @route       GET /auth/signin
+// @route       GET /auth/register
 // @access      Public
 export const userRegister = asyncHandler(async (req, res) => {
   logger.info(`GET: /auth/register`);
@@ -161,34 +161,38 @@ export const resetPassword = asyncHandler(async (req, res) => {
   logger.info(`POST: /auth/resetpassword`);
   const { email, pwd1, pwd2 } = req.body;
 
-  return res.status(200).json({ status: true });
+  // return res.status(200).json({ status: true });
 
   // const client = await User.findOne({ email });
 
-  /* if (pwd1 !== pwd2) {
+  if (pwd1 !== pwd2) {
     return res
       .status(200)
       .json({ status: false, cause: `Passwords don't match` });
   }
 
   try {
+    const client = await User.findOne({ email });
+
     createHash(pwd1, (data) => {
       const { status, original, payload } = data;
 
       if (status) {
-        const saved = client.save({ password: `${payload}` });
-        console.log(`\n\n-----------------------------------`);
+        client.password = payload;
+        const saved = client.save();
+        console.log(`\n\n---------------------------------------`);
         console.log(saved);
-        console.log(`-----------------------------------\n\n`);
+        console.log(`---------------------------------------\n\n`);
+        return res.status(200).json({ status: true });
       } else {
-        return res.status(200).json({ status: false, cause: `${data.error}` });
+        return res.status(200).json({ status: false });
       }
     });
   } catch (err) {
     return res
       .status(200)
       .json({ status: false, cause: `Passwords don't match` });
-  } */
+  }
 });
 
 export const testGenerateToken = asyncHandler(async (req, res) => {

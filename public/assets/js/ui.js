@@ -82,14 +82,14 @@ export const updateUsersList = async (
       addAttribute(item, "data-toggle", "tooltip");
       addAttribute(item, "data-placement", "right");
       addAttribute(item, "data-html", "true");
-      addAttribute(item, "title", `${uObj.fname}`);
+      addAttribute(item, "title", `${displayName}`);
 
       addAttribute(connectIcon, "class", "bi");
       addAttribute(connectIcon, "id", `connecticon-${uObj._id}`);
       addAttribute(connectIcon, "data-toggle", "tooltip");
       addAttribute(connectIcon, "data-placement", "right");
       addAttribute(connectIcon, "data-html", "true");
-      addAttribute(connectIcon, "title", `Connect with ${uObj.fname}`);
+      addAttribute(connectIcon, "title", `Connect with ${displayName}`);
 
       // addAttribute(blockIcon, "class", "bi bi-eye-slash-fill");
       addAttribute(blockIcon, "id", `blockicon-${uObj._id}`);
@@ -157,14 +157,14 @@ export const updateUsersList = async (
 
           if (userIndex != -1) {
             addAttribute(blockIcon, "class", "bi bi-eye-fill");
-            addAttribute(blockIcon, "title", `Unblock ${uObj.fname}`);
+            addAttribute(blockIcon, "title", `Unblock ${displayName}`);
             addClickHandler(blockIcon, (e) => {
               const target = e.target.id.split("-")[1];
               unblockUser(currentUser, target);
             });
           } else {
             addAttribute(blockIcon, "class", "bi bi-eye-slash-fill");
-            addAttribute(blockIcon, "title", `Block ${uObj.fname}`);
+            addAttribute(blockIcon, "title", `Block ${displayName}`);
             addClickHandler(blockIcon, (e) => {
               const target = e.target.id.split("-")[1];
               blockUser(currentUser, target);
@@ -172,7 +172,7 @@ export const updateUsersList = async (
           }
         } else {
           addAttribute(blockIcon, "class", "bi bi-eye-slash-fill");
-          addAttribute(blockIcon, "title", `Block ${uObj.fname}`);
+          addAttribute(blockIcon, "title", `Block ${displayName}`);
           addClickHandler(blockIcon, (e) => {
             const target = e.target.id.split("-")[1];
             blockUser(currentUser, target);
@@ -380,7 +380,7 @@ export const showMediaControls = (micControlHandler, videoControlHandler) => {
 
   // Add attributes
   addAttribute(container, "class", "container");
-  addAttribute(nav, "class", "navbar navbar-expand-sm bg-light");
+  addAttribute(nav, "class", "navbar navbar-expand bg-light");
   addAttribute(containerFluid, "class", "container-fluid");
 
   // List
